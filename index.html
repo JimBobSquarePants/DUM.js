@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+<head>
+    <style>
+        html {
+            font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .highlight {
+            background-color: hotpink;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>DUM.js Demo</h1>
+        <ul>
+            <li>First </li>
+            <li>Second</li>
+            <li>Third</li>
+            <li>Fourth</li>
+        </ul>
+    </div>
+</body>
+<script src="src/dum.min.js"></script>
+<script>
+    $d.ready().then(() => {
+        $d.queryAll("li:nth-of-type(even)").forEach((li) => {
+            $d.addClass(li, "highlight");
+        });
+
+        $d.on($d.query("ul"), "click", ".highlight", (e) => {
+            $d.removeClass(e.target, "highlight");
+        });
+    });
+</script>
+
+</html>
