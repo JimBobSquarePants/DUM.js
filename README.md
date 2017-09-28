@@ -15,7 +15,7 @@
 |--------------------------------------|----------|
 | `ready(context)` | Fires when the documents `DOMContentLoaded` is triggered. Returns a Promise.|
 | `query(expression, context)` | A shortcut for `element.querySelectorSelector()`. Context defaults to the document when no context is passed.|
-| `query(expression, context)` | A shortcut for `element.querySelectorSelectorAll()`. Context defaults to the document when no context is passed.|
+| `queryAll(expression, context)` | A shortcut for `element.querySelectorSelectorAll()`. Context defaults to the document when no context is passed.|
 |`addClass(element, names)`| Adds a space-separated collection of CSS classes to the element.|
 |`removeClass(element, names)`| Removes a space-separated collection of CSS classes from the element.|
 |`on(element, events, selector, handler, capture)`| Binds a space separated collection of events to the element. Can be delagated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler|
