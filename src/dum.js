@@ -1,5 +1,13 @@
 /* jshint esversion: 6 */
 
+/*!
+ * DUM.js
+ * https://github.com/JimBobSquarePants/DUM.js
+ *
+ * Copyright James Jackson-South and other contributors
+ * Released under the MIT license
+ */
+
 ((w, d) => {
 
     // Regular expressions
@@ -28,6 +36,16 @@
 
     const isArray = (obj) => { return type(obj) === "array"; };
 
+    const arrayHandler = (items, handler, args) => {
+        if (isArray(items)) {
+            let result = [];
+            items.forEach((i) => { result.push(handler.apply(i, args)); });
+            return result;
+        }
+
+        return handler.apply(items, args);
+    };
+
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
     const Handler = (() => {
@@ -37,23 +55,22 @@
         // Bubbled event handling
         const delegate = (selector, handler, event) => {
             let t = event.target;
-            while (t && t !== this) {
-                if (t.matches(selector)) {
-                    handler.call(t, event);
-                    break;
-                }
-                t = t.parentNode;
+            if (t.closest && t.closest(selector)) {
+                handler.call(this, event);
             }
         };
         return {
-            on: (element, event, selector, handler, capture) => {
-                let delegateHandler = selector ? delegate.bind(element, selector, handler) : handler;
-                element.addEventListener(event, delegateHandler, capture);
+            on: (element, event, selector, handler) => {
+                if (selector) {
+                    element.addEventListener(event, handler = delegate.bind(element, selector, handler), false);
+                } else {
+                    element.addEventListener(event, handler, true);
+                }
                 listeners[i] = {
                     element: element,
                     event: event,
-                    handler: delegateHandler,
-                    capture: capture
+                    handler: handler,
+                    capture: selector ? false : true
                 };
                 return i++;
             },
@@ -108,45 +125,44 @@
             return Array.prototype.slice.call(isString(expression) ? (context || document).querySelectorAll(expression) : expression || []);
         }
 
-        // Adds a space separated collection of classes to an element
-        addClass(element, names) {
+        // Adds a space separated collection of classes to an element or collection of elements
+        addClass(elements, names) {
             names.split(rspace).forEach((n) => {
-                element.classList.add(n);
+                arrayHandler(elements, function () { this.classList.add(n); });
             });
         }
 
-        // Adds a space separated collection of classes to an element
-        removeClass(element, names) {
+        // Adds a space separated collection of classes to an element or collection of elements
+        removeClass(elements, names) {
             names.split(rspace).forEach((n) => {
-                element.classList.remove(n);
+                arrayHandler(elements, function () { this.classList.remove(n); });
             });
         }
 
         // Adds an event listener to the given element returning the id of the listener
         // Events can be delegated by passing a selector
-        on(element, events, selector, handler, capture) {
-
+        on(element, events, selector, handler) {
             if (isArray(events)) {
                 let ids = [];
                 events.forEach((e => {
-                    ids.push(Handler.on(element, e, selector, handler, capture));
+                    ids.push(Handler.on(element, e, selector, handler));
                 }));
 
                 return ids;
             }
 
-            return Handler.on(element, events, selector, handler, capture);
+            return Handler.on(element, events, selector, handler);
         }
 
-        // Removes the event listener matching the given id
+        // Removes the event listener matching the given ids
         off(ids) {
-            if (isArray(ids)) {
-                ids.forEach((i) => {
-                    Handler.off(i);
-                });
-            } else {
-                Handler.off(ids);
-            }
+            arrayHandler(ids, function () { Handler.off(this); });
+        }
+
+        // Triggers an event. By default the event bubbles and is cancelable
+        trigger(elements, event, detail) {
+            let params = { bubbles: true, cancelable: true, detail: detail };
+            arrayHandler(elements, function () { return this.dispatchEvent(new CustomEvent(event, params)); });
         }
     }
 

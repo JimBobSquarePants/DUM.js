@@ -31,6 +31,12 @@
             color: white;
             cursor: pointer;
         }
+
+        .highlight-alt {
+            background-color: teal;
+            color: white;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -43,19 +49,36 @@
             <li>Third</li>
             <li>Fourth</li>
         </ul>
+        <button>Click Me</button>
     </div>
 </body>
 <script src="src/dum.min.js"></script>
 <script>
     $d.ready().then(() => {
-        $d.queryAll("li:nth-of-type(even)").forEach((li) => {
-            $d.addClass(li, "highlight");
-        });
+        let even = $d.queryAll("li:nth-of-type(even)");
+        $d.addClass(even, "highlight");
 
         $d.on($d.query("ul"), "click", ".highlight", (e) => {
             $d.removeClass(e.target, "highlight");
         });
+
+        let button = $d.query("button");
+        let odd = $d.queryAll("li:nth-of-type(odd)");
+
+        var id = $d.on(window, "custom", "li:nth-of-type(even)", (e) => {
+            $d.addClass(e.target, "highlight-alt");
+        })
+
+        $d.on(button, "click", null, (e) => {
+            $d.removeClass(even, "highlight");
+            $d.addClass(odd, "highlight");
+
+            window.setTimeout(() => {
+                $d.trigger($d.queryAll("li"), "custom");
+            }, 500);
+        });
     });
+
 </script>
 
 </html>
