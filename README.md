@@ -14,13 +14,14 @@
 
 |Method  |Function |
 |--------|------------------------------------|
-| `ready(context)` | Fires when the documents `DOMContentLoaded` is triggered. Returns a Promise.                              | `id(id)` | A shortcut for `document.getElementById()`.|
+| `ready(context)` | Fires when the documents `DOMContentLoaded` is triggered. Returns a Promise. |
+| `id(id)` | A shortcut for `document.getElementById()`.|
 | `query(expression, context)` | A shortcut for `element.querySelectorSelector()`. Context defaults to the document when no context is passed.                                                                        |
 | `queryAll(expression, context)` | A shortcut for `element.querySelectorSelectorAll()`. Context defaults to the document when no context is passed.                                                                     |
 | `addClass(elements, names)`| Adds a space-separated collection of CSS classes to the element or collection of elements.                                                                                           |
 | `removeClass(elements, names)`| Removes a space-separated collection of CSS classes from the element  or collection of elements.                                                                                     |
-| `on(element, events, selector, handler, capture)` | Binds a space separated collection of events to the element. Can be delagated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler |
-| `one(element, events, selector, handler, capture)` | Binds a space separated collection of events to the element. removing it once the event is fired. Can be delagated to a parent if a selector is passed. |
+| `on(element, events, selector, handler, capture)` | Binds a space-separated collection of events to the element. Can be delagated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler |
+| `one(element, events, selector, handler, capture)` | Binds a space-separated collection of events to the element. removing it once the event is fired. Can be delagated to a parent if a selector is passed. |
 | `off(ids)`| Removes the event listener matching the given id or ids.|
 | `trigger(elements, event, detail)`| Triggers an event. By default the event bubbles and is cancelable|
 
@@ -30,11 +31,11 @@
 The following code runs when the document is ready adding a class `highlight` to the even `li` elements. A click handler is bound to the parent which removes that class from the `li` target.
 
 ``` js
-$d.ready().then(() => {
+$d.ready().then(_ => {
     let even = $d.queryAll("li:nth-of-type(even)");
     $d.addClass(even, "highlight");
 
-    $d.on($d.query("ul"), "click", ".highlight", (e) => {
+    $d.on($d.query("ul"), "click", ".highlight", e => {
         $d.removeClass(e.target, "highlight");
     });
 });
