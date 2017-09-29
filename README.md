@@ -1,4 +1,4 @@
-<img src="dum-js.svg" height="150" alt="DUM.js logo"/>
+# <img src="dum-js.svg" height="150" alt="DUM.js logo"/>
 
 **A teeny tiny helper library for working with the DOM**
 
