@@ -4,7 +4,7 @@
  * DUM.js
  * https://github.com/JimBobSquarePants/DUM.js
  *
- * Copyright James Jackson-South and other contributors
+ * Copyright James Jackson-South and contributors
  * Released under the MIT license
  */
 
@@ -14,7 +14,7 @@
     const rspace = /\s+/;
 
     // Returns the type of an object in lowercase
-    const type = (obj) => {
+    const type = obj => {
         if (obj === null) {
             return "null";
         }
@@ -32,9 +32,9 @@
         return ret;
     };
 
-    const isString = (obj) => { return type(obj) === "string"; };
+    const isString = obj => { return type(obj) === "string"; };
 
-    const isArray = (obj) => { return type(obj) === "array"; };
+    const isArray = obj => { return type(obj) === "array"; };
 
     const arrayHandler = (items, handler, args) => {
         if (isArray(items)) {
@@ -48,7 +48,7 @@
 
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
-    const Handler = (() => {
+    const Handler = (_ => {
         let i = 1,
             listeners = {};
 
@@ -74,7 +74,7 @@
                 };
                 return i++;
             },
-            off: (id) => {
+            off: id => {
                 if (id in listeners) {
                     let h = listeners[id];
                     h.element.removeEventListener(h.event, h.handler, h.capture);
@@ -96,12 +96,13 @@
                     resolve();
                 }
                 else {
-                    context.addEventListener("DOMContentLoaded", () => {
-                        resolve();
-                    });
+                    Handler.on(context, "DOMContentLoaded", null, _ => resolve());
                 }
             });
         }
+
+        // A shortcut for document.getElementById();
+        id(id) { return d.getElementById(id); }
 
         // A shortcut for element.querySelectorSelector();
         query(expression, context) {
@@ -127,14 +128,14 @@
 
         // Adds a space separated collection of classes to an element or collection of elements
         addClass(elements, names) {
-            names.split(rspace).forEach((n) => {
+            names.split(rspace).forEach(n => {
                 arrayHandler(elements, function () { this.classList.add(n); });
             });
         }
 
         // Adds a space separated collection of classes to an element or collection of elements
         removeClass(elements, names) {
-            names.split(rspace).forEach((n) => {
+            names.split(rspace).forEach(n => {
                 arrayHandler(elements, function () { this.classList.remove(n); });
             });
         }
@@ -142,16 +143,27 @@
         // Adds an event listener to the given element returning the id of the listener
         // Events can be delegated by passing a selector
         on(element, events, selector, handler) {
-            if (isArray(events)) {
-                let ids = [];
-                events.forEach((e => {
-                    ids.push(Handler.on(element, e, selector, handler));
-                }));
+            let ids = [];
+            events = isArray(events) ? events : [events];
 
-                return ids;
-            }
+            events.forEach(e => {
+                ids.push(Handler.on(element, e, selector, handler));
+            });
 
-            return Handler.on(element, events, selector, handler);
+            return ids.length > 1 ? ids : ids.pop();
+        }
+
+        // Adds an event listener to the given element removing it once the event is fired
+        // Events can be delegated by passing a selector
+        one(element, events, selector, handler) {
+            let ids = [],
+                one = _ => this.off(ids);
+
+            events = isArray(events) ? events : [events];
+            events.forEach(e => {
+                ids.push(Handler.on(element, e, selector, handler));
+                ids.push(Handler.on(element, e, selector, one));
+            });
         }
 
         // Removes the event listener matching the given ids

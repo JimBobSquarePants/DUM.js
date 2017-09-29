@@ -52,7 +52,7 @@
         <button>Click Me</button>
     </div>
 </body>
-<script src="src/dum.min.js"></script>
+<script src="src/dum.js"></script>
 <script>
     $d.ready().then(() => {
         let even = $d.queryAll("li:nth-of-type(even)");
@@ -69,8 +69,8 @@
             $d.addClass(e.target, "highlight-alt");
         })
 
-        $d.on(button, "click", null, (e) => {
-            $d.removeClass(even, "highlight");
+        $d.one(button, "click", null, (e) => {
+            $d.removeClass(even, "highlight highlight-alt");
             $d.addClass(odd, "highlight");
 
             window.setTimeout(() => {
