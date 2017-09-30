@@ -58,18 +58,18 @@
         let even = $d.queryAll("li:nth-of-type(even)");
         $d.addClass(even, "highlight");
 
-        $d.on($d.query("ul"), "click", ".highlight", (e) => {
+        $d.on($d.query("ul"), "click", ".highlight", e => {
             $d.removeClass(e.target, "highlight");
         });
 
         let button = $d.query("button");
         let odd = $d.queryAll("li:nth-of-type(odd)");
 
-        var id = $d.on(window, "custom", "li:nth-of-type(even)", (e) => {
+        var id = $d.on(window, "custom", "li:nth-of-type(even)", e => {
             $d.addClass(e.target, "highlight-alt");
         })
 
-        $d.one(button, "click", null, (e) => {
+        $d.one(button, "click", null, e => {
             $d.removeClass(even, "highlight highlight-alt");
             $d.addClass(odd, "highlight");
 

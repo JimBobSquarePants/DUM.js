@@ -37,13 +37,10 @@
     const isArray = obj => { return type(obj) === "array"; };
 
     const arrayHandler = (items, handler, args) => {
-        if (isArray(items)) {
-            let result = [];
-            items.forEach((i) => { result.push(handler.apply(i, args)); });
-            return result;
-        }
-
-        return handler.apply(items, args);
+        items = isArray(items) ? items : [items];
+        let result = [];
+        items.forEach(i => { result.push(handler.apply(i, args)); });
+        return result;
     };
 
     // Handles the adding and removing of events. 
@@ -143,14 +140,7 @@
         // Adds an event listener to the given element returning the id of the listener
         // Events can be delegated by passing a selector
         on(element, events, selector, handler) {
-            let ids = [];
-            events = isArray(events) ? events : [events];
-
-            events.forEach(e => {
-                ids.push(Handler.on(element, e, selector, handler));
-            });
-
-            return ids.length > 1 ? ids : ids.pop();
+            return arrayHandler(events, function () { return Handler.on(element, this, selector, handler); });
         }
 
         // Adds an event listener to the given element removing it once the event is fired
