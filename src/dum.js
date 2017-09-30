@@ -45,7 +45,7 @@
 
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
-    const Handler = (_ => {
+    const Handler = (() => {
         let i = 1,
             listeners = {};
 
@@ -93,7 +93,7 @@
                     resolve();
                 }
                 else {
-                    Handler.on(context, "DOMContentLoaded", null, _ => resolve());
+                    Handler.on(context, "DOMContentLoaded", null, () => resolve());
                 }
             });
         }
@@ -147,7 +147,7 @@
         // Events can be delegated by passing a selector
         one(element, events, selector, handler) {
             let ids = [],
-                one = _ => this.off(ids);
+                one = () => this.off(ids);
 
             events = isArray(events) ? events : [events];
             events.forEach(e => {
