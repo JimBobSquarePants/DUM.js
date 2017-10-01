@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>QUnit Tests</title>
+  <link rel="stylesheet" href="qunit-2.4.0.css">
+</head>
+
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <main>
+    <p id="firstp"></p>
+  </main>
+  <script src="qunit-2.4.0.js"></script>
+  <script src="../src/dum.js"></script>
+  <script>
+    let globals = {
+      handlers: [],
+      addHandlers: function (ids) {
+        this.handlers = this.handlers.concat(ids);
+      },
+      tearDown: function () {
+        $.DUM.off(this.handlers);
+      }
+    }
+  </script>
+  <script src="unit/events.js"></script>
+  <script src="unit/selectors.js"></script>
+</body>
+
+</html>
