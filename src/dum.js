@@ -32,15 +32,23 @@
         return ret;
     };
 
-    const isString = obj => { return type(obj) === "string"; };
+    const isString = obj => type(obj) === "string";
 
-    const isArray = obj => { return type(obj) === "array"; };
+    const isArray = obj => type(obj) === "array";
 
-    const arrayHandler = (items, handler, args) => {
+    const arrayFunction = (items, handler, args) => {
         items = isArray(items) ? items : [items];
         let result = [];
-        items.forEach(i => { result.push(handler.apply(i, args)); });
+        items.forEach(i => result.push(handler.apply(i, args)));
         return result;
+    };
+
+    const classAction = (elements, method, names) => {
+        (isArray(names) ? names : names.split(rspace)).forEach(n => {
+            arrayFunction(elements, function () {
+                this.classList[method](n);
+            });
+        });
     };
 
     // Handles the adding and removing of events. 
@@ -53,7 +61,7 @@
         const delegate = (selector, handler, event) => {
             let t = event.target;
             if (t.closest && t.closest(selector)) {
-                handler.call(this, event);
+                handler.call(t, event);
             }
         };
         return {
@@ -123,24 +131,25 @@
             return Array.prototype.slice.call(isString(expression) ? (context || document).querySelectorAll(expression) : expression || []);
         }
 
-        // Adds a space separated collection of classes to an element or collection of elements
+        // Adds an array or space-separated collection of classes to an element or collection of elements
         addClass(elements, names) {
-            names.split(rspace).forEach(n => {
-                arrayHandler(elements, function () { this.classList.add(n); });
-            });
+            classAction(elements, "add", names);
         }
 
-        // Adds a space separated collection of classes to an element or collection of elements
+        // Removes an array or space-separated collection of classes to an element or collection of elements
         removeClass(elements, names) {
-            names.split(rspace).forEach(n => {
-                arrayHandler(elements, function () { this.classList.remove(n); });
-            });
+            classAction(elements, "remove", names);
+        }
+
+        // Toggles an array or space-separated collection of classes to an element or collection of elements
+        toggleClass(elements, names) {
+            classAction(elements, "toggle", names);
         }
 
         // Adds an event listener to the given element returning the id of the listener
         // Events can be delegated by passing a selector
         on(element, events, selector, handler) {
-            return arrayHandler(events, function () { return Handler.on(element, this, selector, handler); });
+            return arrayFunction(events, function () { return Handler.on(element, this, selector, handler); });
         }
 
         // Adds an event listener to the given element removing it once the event is fired
@@ -158,13 +167,13 @@
 
         // Removes the event listener matching the given ids
         off(ids) {
-            arrayHandler(ids, function () { Handler.off(this); });
+            arrayFunction(ids, function () { Handler.off(this); });
         }
 
         // Triggers an event. By default the event bubbles and is cancelable
         trigger(elements, event, detail) {
             let params = { bubbles: true, cancelable: true, detail: detail };
-            arrayHandler(elements, function () { return this.dispatchEvent(new CustomEvent(event, params)); });
+            arrayFunction(elements, function () { return this.dispatchEvent(new CustomEvent(event, params)); });
         }
     }
 

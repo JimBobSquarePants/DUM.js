@@ -59,7 +59,7 @@
         $d.addClass(even, "highlight");
 
         $d.on($d.query("ul"), "click", ".highlight", e => {
-            $d.removeClass(e.target, "highlight");
+            $d.removeClass(e.target, "highlight highlight-alt");
         });
 
         let button = $d.query("button");
