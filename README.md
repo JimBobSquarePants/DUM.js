@@ -2,43 +2,127 @@
 
 **A teeny tiny helper library for working with the DOM**
 
-**DUM.js** helps you work with the DOM a little easier. 
+**DUM.js** helps you work with the DOM a little easier by providing a concise API for common tasks that would normally be much more verbose. 
 
-**DUM.js** isn't for AJAX or animations or anything else already covered by dedicated libraries.
+**DUM.js** isn't designed for AJAX or animations or anything else already covered by dedicated libraries.
 
 *Please note: This is a work in progress, ideas and assistance most welcome!!*
 
 ## API
 
-**DUM.js** adds an object to the global scope with the followings signatures: `$d` or `$DUM`
+**DUM.js** adds an object to the global scope with the following identifiers: `$d` or `$DUM` That object contains the following signatures.
 
-|Method  |Function |
-|--------|------------------------------------|
-| `ready(context)` | Fires when the documents `DOMContentLoaded` is triggered. Returns a Promise. |
-| `id(id)` | A shortcut for `document.getElementById()`.|
-| `query(expression, context)` | A shortcut for `element.querySelectorSelector()`. Context defaults to the document when no context is passed.                                                                        |
-| `queryAll(expression, context)` | A shortcut for `element.querySelectorSelectorAll()`. Context defaults to the document when no context is passed.                                                                     |
-| `addClass(elements, names)`| Adds a space-separated collection of CSS classes to the element or collection of elements.                                                                                           |
-| `removeClass(elements, names)`| Removes a space-separated collection of CSS classes from the element  or collection of elements.                                                                                     |
-| `on(element, events, selector, handler, capture)` | Binds a space-separated collection of events to the element. Can be delagated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler |
-| `one(element, events, selector, handler, capture)` | Binds a space-separated collection of events to the element. removing it once the event is fired. Can be delagated to a parent if a selector is passed. |
-| `off(ids)`| Removes the event listener matching the given id or ids.|
-| `trigger(elements, event, detail)`| Triggers an event. By default the event bubbles and is cancelable|
-
-
-## Example
-
-The following code runs when the document is ready adding a class `highlight` to the even `li` elements. A click handler is bound to the parent which removes that class from the `li` target.
+<dl>
+<dt><code>ready(context)</code></dt>
+<dd>Fires when the documents <code>DOMContentLoaded</code> is triggered. Returns a Promise.</dd>
+</dl>
 
 ``` js
-$d.ready().then(_ => {
-    let even = $d.queryAll("li:nth-of-type(even)");
-    $d.addClass(even, "highlight");
-
-    $d.on($d.query("ul"), "click", ".highlight", e => {
-        $d.removeClass(e.target, "highlight");
-    });
+$d.ready().then(() => {
+ // Do your thing
 });
+```
+
+<dl>
+<dt><code>id(id)</code></dt>
+<dd>A shortcut for <code>document.getElementById()</code></dd>
+</dl>
+
+``` js
+let mainForm  = $d.id("mainForm");
+```
+
+<dl>
+<dt><code>query(expression, context)</code></dt>
+<dd>A shortcut for <code>element.querySelector()</code>. 
+Context defaults to the document when no context is passed.</dd>
+</dl>
+
+``` js
+let mainForm  = $d.query(".form");
+```
+
+<dl>
+<dt><code>queryAll(expression, context)</code></dt>
+<dd>A shortcut for <code>element.querySelectorAll()</code>. 
+Context defaults to the document when no context is passed. Results are a true array and can be enumerated via <code>forEach</code>.</dd>
+</dl>
+
+``` js
+let inputs  = $d.queryAll("input[type=text]");
+```
+
+<dl>
+<dt><code>addClass(elements, names)</code></dt>
+<dd>Adds an array or space-separated collection of CSS classes to the element or collection of elements.</dd>
+</dl>
+
+``` js
+$d.addClass($d.queryAll("input[type=text]"), "fancy");
+$d.addClass($d.queryAll("input[type=text]"), "fancy fancier");
+$d.addClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
+```
+
+<dl>
+<dt><code>removeClass(elements, names)</code></dt>
+<dd>Removes an array or space-separated collection of CSS classes from the element or collection of elements.</dd>
+</dl>
+
+``` js
+$d.removeClass($d.queryAll("input[type=text]"), "fancy");
+$d.removeClass($d.queryAll("input[type=text]"), "fancy fancier");
+$d.removeClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
+```
+
+<dl>
+<dt><code>toggleClass(elements, names)</code></dt>
+<dd>Toggles an array or space-separated collection of CSS classes, adding the classes to or removing from the element or collection of elements.</dd>
+</dl>
+
+``` js
+$d.toggleClass($d.queryAll("input[type=text]"), "fancy");
+$d.toggleClass($d.queryAll("input[type=text]"), "fancy fancier");
+$d.toggleClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
+```
+
+<dl>
+<dt><code>on(element, events, selector, handler, capture)</code></dt>
+<dd>Binds a space-separated collection of events to the element. Can be delegated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler.</dd>
+</dl>
+
+``` js
+let handlerId = $d.on($d.query("ul"), "click", ".highlight", e => {
+    $d.addClass(e.target, "highlight highlight-alt");
+});
+```
+
+<dl>
+<dt><code>one(element, events, selector, handler, capture)</code></dt>
+<dd>Binds a space-separated collection of events to the element, removing it once the event is fired. Can be delegated to a parent if a selector is passed.</dd>
+</dl>
+
+``` js
+$d.one($d.query("ul"), "click", ".highlight", e => {
+    $d.addClass(e.target, "highlight highlight-alt");
+});
+```
+
+<dl>
+<dt><code>off(ids)</code></dt>
+<dd>Removes the event listener or listeners matching the given id or ids.</dd>
+</dl>
+
+``` js
+$d.off(handleIds);
+```
+
+<dl>
+<dt><code>trigger(elements, event, detail)</code></dt>
+<dd>Triggers an event. By default the event bubbles and is cancelable.</dd>
+</dl>
+
+``` js
+$d.trigger($d.queryAll("li"), "customevent");
 ```
 
 ## Browser Support
