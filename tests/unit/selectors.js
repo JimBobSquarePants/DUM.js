@@ -31,3 +31,5 @@ QUnit.test("queryAll selectors match", function (assert) {
     assert.equal(1, actual.length, "queryAll should have a value");
     assert.deepEqual(expected, actual, "queryAll should return the same elements as querySelectorAll");
 });
+
+// TODO: Tests for prev/next

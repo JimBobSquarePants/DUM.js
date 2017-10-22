@@ -43,9 +43,9 @@ let mainForm  = $d.query(".form");
 ```
 
 <dl>
-<dt><code>queryAll(expression, context)</code></dt>
-<dd>A shortcut for <code>element.querySelectorAll()</code>. 
-Context defaults to the document when no context is passed. Results are a true array and can be enumerated via <code>forEach</code>.</dd>
+<dt><code>queryAll(expression, contexts)</code></dt>
+<dd>A shortcut for <code>element.querySelectorAll()</code> with enhancements. 
+Contexts defaults to the document when no context or context array is passed. Results are a true array and can be enumerated via <code>forEach</code>.</dd>
 </dl>
 
 ``` js
@@ -83,6 +83,42 @@ $d.removeClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
 $d.toggleClass($d.queryAll("input[type=text]"), "fancy");
 $d.toggleClass($d.queryAll("input[type=text]"), "fancy fancier");
 $d.toggleClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
+```
+
+<dl>
+<dt><code>getAttr(element, name)</code></dt>
+<dd>Returns the value for the given attribute name from an element.</dd>
+</dl>
+
+``` js
+$d.getAttr($d.queryAll("input[type=text]"), "name");
+```
+
+<dl>
+<dt><code>setAttr(element, values)</code></dt>
+<dd>Sets the collection of attribute values on the element.</dd>
+</dl>
+
+``` js
+$d.setAttr($d.queryAll("input[type=text]"), {"name":"firstname", "placeholder":"first name"});
+```
+
+<dl>
+<dt><code>prev(element, expression)</code></dt>
+<dd>Gets the first previous element sibling matching the given optional expression.</dd>
+</dl>
+
+``` js
+$d.prev($d.query("td"), "[scope=row]");
+```
+
+<dl>
+<dt><code>next(element, expression)</code></dt>
+<dd>Gets the first next element sibling matching the given optional expression.</dd>
+</dl>
+
+``` js
+$d.next($d.query("td"), "[scope=row]");
 ```
 
 <dl>
