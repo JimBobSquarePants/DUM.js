@@ -30,6 +30,8 @@ const $d = ((w, d) => {
 
     const isArray = obj => type(obj) === "array";
 
+    const toArray = obj => Array.prototype.slice.call(obj);
+
     const arrayFunction = (items, handler, args) => {
         items = isArray(items) ? items : [items];
         let result = [];
@@ -42,15 +44,13 @@ const $d = ((w, d) => {
 
     const classAction = (elements, method, names) => {
         (isArray(names) ? names : names.split(rspace)).forEach(n => {
-            arrayFunction(elements, function () {
-                this.classList[method](n);
-            });
+            arrayFunction(elements, function () { this.classList[method](n); });
         });
     };
 
     const sibling = (element, dir, expression) => {
         // eslint-disable-next-line no-empty
-        while (!element.matches(expression) && (element = element[dir])) { }
+        while ((element = element[dir]) && !element.matches(expression)) { }
         return element;
     };
 
@@ -133,7 +133,24 @@ const $d = ((w, d) => {
             }
 
             return arrayFunction(contexts || document, function () {
-                return Array.prototype.slice.call(isString(expression) ? this.querySelectorAll(expression) : expression || []);
+                return toArray(isString(expression) ? this.querySelectorAll(expression) : expression || []);
+            });
+        }
+
+        // Gets the first previous element sibling matching the given optional expression
+        prev(element, expression) {
+            return expression ? sibling(element, "previousElementSibling", expression) : element.previousElementSibling;
+        }
+
+        // Gets the first next element sibling matching the given optional expression
+        next(element, expression) {
+            return expression ? sibling(element, "nextElementSibling", expression) : element.nextElementSibling;
+        }
+
+        // Gets the immediate children of the elements or elements matching the given optional expression
+        children(elements, expression) {
+            return arrayFunction(elements, function () {
+                return toArray(this.children || []).filter(c => expression ? c.matches(expression) : true);
             });
         }
 
@@ -162,19 +179,23 @@ const $d = ((w, d) => {
             return element.getAttribute(name);
         }
 
-        // Sets the collection of attribute values on the element
-        setAttr(element, values) {
-            Object.keys(values).forEach(k => element.setAttribute(k, values[k]));
+        // Sets the collection of attribute values on the element or elements
+        setAttr(elements, values) {
+            return arrayFunction(elements, function () {
+                Object.keys(values).forEach(k => this.setAttribute(k, values[k]));
+            });
         }
 
-        // Gets the first previous element sibling matching the given optional expression
-        prev(element, expression) {
-            return expression ? sibling(element, "previousElementSibling", expression) : element.previousElementSibling;
-        }
-
-        // Gets the first next element sibling matching the given optional expression
-        next(element, expression) {
-            return expression ? sibling(element, "nextElementSibling", expression) : element.nextElementSibling;
+        // Sets the collection of style values on the element
+        setStyle(element, values) {
+            Object.keys(values).forEach(k => {
+                if (k in element.style) {
+                    element.style[k] = values[k];
+                }
+                else {
+                    element.style.setProperty(k, values[k]);
+                }
+            });
         }
 
         // Adds an event listener to the given element returning the id of the listener
@@ -208,6 +229,6 @@ const $d = ((w, d) => {
         }
     }
 
-    return w.$d = w.$DUM = new DUM();
+    return w.$d = w.DUM = new DUM();
 
 })(window, document);

@@ -12,7 +12,15 @@
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
   <main>
-    <p id="firstp"></p>
+    <p id="firstp">
+      <span>First</span>
+    </p>
+    <p id="secondp">
+      <span>Second</span>
+    </p>
+    <p id="thirdp">
+      <span>Third</span>
+    </p>
   </main>
   <script src="qunit-2.4.0.js"></script>
   <script src="../src/dum.js"></script>
@@ -23,13 +31,15 @@
         this.handlers = this.handlers.concat(ids);
       },
       tearDown: function () {
-        $.DUM.off(this.handlers);
+        DUM.off(this.handlers);
       }
     }
   </script>
   <script src="unit/selectors.js"></script>
   <script src="unit/class.js"></script>
+  <script src="unit/attributes.js"></script>
   <script src="unit/events.js"></script>
+  <script src="unit/creation.js"></script>
 </body>
 
 </html>

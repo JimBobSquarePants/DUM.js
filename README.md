@@ -10,7 +10,7 @@
 
 ## API
 
-**DUM.js** adds an object to the global scope with the following identifiers: `$d` or `$DUM` That object contains the following signatures.
+**DUM.js** adds an object to the global scope with the following identifiers: `$d` or `DUM` That object contains the following signatures.
 
 <dl>
 <dt><code>ready(context)</code></dt>
@@ -119,6 +119,24 @@ $d.prev($d.query("td"), "[scope=row]");
 
 ``` js
 $d.next($d.query("td"), "[scope=row]");
+```
+
+<dl>
+<dt><code>children(elements, expression)</code></dt>
+<dd>Gets the immediate children of the elements or elements matching the given optional expression.</dd>
+</dl>
+
+``` js
+$d.children($d.query("tr"), "td");
+```
+
+<dl>
+<dt><code>create(type)</code></dt>
+<dd>A shortcut for <code>document.createElement()</code>.</dd>
+</dl>
+
+``` js
+$d.create($d.query("p"));
 ```
 
 <dl>

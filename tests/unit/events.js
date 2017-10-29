@@ -10,43 +10,43 @@ QUnit.test("null or undefined handler", function (assert) {
 
     // on
     try {
-        globals.addHandlers($DUM.on($DUM.id("firstp"), "click", null, null));
+        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", null, null));
         assert.ok(true, "Passing a null handler to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers($DUM.on($DUM.id("firstp"), "click", undefined, undefined));
+        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", undefined, undefined));
         assert.ok(true, "Passing an undefined handler to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers($DUM.on($DUM.id("firstp"), "click", null, e => { }));
+        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", null, e => { }));
         assert.ok(true, "Passing a null selector to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers($DUM.on($DUM.id("firstp"), "click", undefined, e => { }));
+        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", undefined, e => { }));
         assert.ok(true, "Passing an udefined selector to on will not throw an exception");
     } catch (e) { }
 
     // one
     try {
-        $DUM.one($DUM.id("firstp"), "click", null, null);
+        DUM.one(DUM.id("firstp"), "click", null, null);
         assert.ok(true, "Passing a null handler to one will not throw an exception");
     } catch (e) { }
 
     try {
-        $DUM.one($DUM.id("firstp"), "click", undefined, undefined);
+        DUM.one(DUM.id("firstp"), "click", undefined, undefined);
         assert.ok(true, "Passing an undefined handler to one will not throw an exception");
     } catch (e) { }
 
     try {
-        $DUM.one($DUM.id("firstp"), "click", null, e => { });
+        DUM.one(DUM.id("firstp"), "click", null, e => { });
         assert.ok(true, "Passing a null selector to one will not throw an exception");
     } catch (e) { }
 
     try {
-        $DUM.one($DUM.id("firstp"), "click", undefined, e => { });
+        DUM.one(DUM.id("firstp"), "click", undefined, e => { });
         assert.ok(true, "Passing an udefined selector to one will not throw an exception");
     } catch (e) { }
 });
