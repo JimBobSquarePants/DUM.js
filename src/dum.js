@@ -197,19 +197,21 @@ const $d = ((w, d) => {
                         this.style.setProperty(k, values[k]);
                     }
                 });
-            });            
+            });
         }
 
-        // Empties the contents of the given element. Any event handlers bound to the element contents are automatically removed
-        empty(element) {
-            while (element.firstChild) {
-                let child = element.firstChild;
-                Object.keys(Handler.listeners).forEach(l => {
-                    // Check if eventhandlers are themselves a weak map we might be able to just delete here
-                    if (Handler.listeners[l] === child) { $d.off(l); }
-                });
-                child.remove();
-            }
+        // Empties the contents of the given element or elements. Any event handlers bound to the element contents are automatically removed
+        empty(elements) {
+            return arrayFunction(elements, function () {
+                let child = this;
+                while (child = this.firstChild) {
+                    Object.keys(Handler.listeners).forEach(l => {
+                        // Check if eventhandlers are themselves a weak map; we might be able to just delete here
+                        if (Handler.listeners[l] === child) { $d.off(l); }
+                    });
+                    child.remove();
+                }
+            });
         }
 
         // Adds an event listener to the given element returning the id of the listener

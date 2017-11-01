@@ -6,7 +6,9 @@
 
 **DUM.js** isn't designed for AJAX or animations or anything else already covered by dedicated libraries.
 
-*Please note: This is a work in progress, ideas and assistance most welcome!!*
+*Please note: This is a work in progress, ideas and assistance most welcome!!
+I'm specifically looking for help bundling the library for different importers.
+*
 
 ## API
 
@@ -149,12 +151,13 @@ $d.create($d.query("p"));
 ```
 
 <dl>
-<dt><code>empty(element)</code></dt>
-<dd>Empties the contents of the given element. Any event handlers bound to the element contents are automatically removed.</dd>
+<dt><code>empty(elements)</code></dt>
+<dd>Empties the contents of the given element or elements. Any event handlers bound to each element contents are automatically removed.</dd>
 </dl>
 
 ``` js
 $d.empty($d.query("input[type=text]"));
+$d.empty($d.queryAll("input[type=text]"));
 ```
 
 <dl>
