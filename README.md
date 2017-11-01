@@ -154,7 +154,7 @@ $d.create($d.query("p"));
 </dl>
 
 ``` js
-$d.setAttr($d.queryAll("input[type=text]"), {"height":"16px", "display":"block"});
+$d.empty($d.query("input[type=text]"));
 ```
 
 <dl>
