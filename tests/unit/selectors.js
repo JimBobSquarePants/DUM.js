@@ -1,8 +1,6 @@
 QUnit.module("selectors", {
-    setup: function () {
-        document.body.focus();
-    },
-    teardown: globals.tearDown
+    beforeEach: globals.beforeEach,
+    afterEach: globals.afterEach
 });
 
 QUnit.test("id selectors match", function (assert) {

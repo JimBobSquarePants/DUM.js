@@ -6,40 +6,51 @@
   <meta name="viewport" content="width=device-width">
   <title>QUnit Tests</title>
   <link rel="stylesheet" href="qunit-2.4.0.css">
+  <script src="../src/dum.js"></script>
+  <script>
+    window.globals = {
+      handlers: [],
+      addHandlers: function (ids) {
+        this.handlers = this.handlers.concat(ids);
+      },
+      beforeEach: function () {
+        let main = document.getElementById("main");
+        let fragment = document.createDocumentFragment();
+        const ids = ["firstp", "secondp", "thirdp"];
+
+        ids.forEach(function (i) {
+          let p = document.createElement("p");
+          p.id = i;
+          p.classList.add("tester");
+          p.innerHTML = `<span>${i}</span>`;
+          fragment.appendChild(p);
+        });
+        main.appendChild(fragment);
+        document.body.focus();
+      },
+      afterEach: function () {
+        DUM.off(window.globals.handlers);
+        let main = document.getElementById("main");
+        main.innerHTML = "";
+      }
+    }
+  </script>
 </head>
 
 <body>
   <div id="qunit"></div>
   <div id="qunit-fixture"></div>
-  <main>
-    <p id="firstp">
-      <span>First</span>
-    </p>
-    <p id="secondp">
-      <span>Second</span>
-    </p>
-    <p id="thirdp">
-      <span>Third</span>
-    </p>
+  <main id="main">
   </main>
   <script src="qunit-2.4.0.js"></script>
-  <script src="../src/dum.js"></script>
-  <script>
-    let globals = {
-      handlers: [],
-      addHandlers: function (ids) {
-        this.handlers = this.handlers.concat(ids);
-      },
-      tearDown: function () {
-        DUM.off(this.handlers);
-      }
-    }
-  </script>
+
   <script src="unit/selectors.js"></script>
   <script src="unit/class.js"></script>
   <script src="unit/attributes.js"></script>
+  <script src="unit/style.js"></script>
   <script src="unit/events.js"></script>
   <script src="unit/creation.js"></script>
+  <script src="unit/empty.js"></script>
 </body>
 
 </html>

@@ -57,8 +57,7 @@ const $d = ((w, d) => {
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
     const Handler = (() => {
-        let i = 1,
-            listeners = {};
+        let i = 1;
 
         // Bubbled event handling
         const delegate = (selector, handler, event) => {
@@ -68,13 +67,14 @@ const $d = ((w, d) => {
             }
         };
         return {
-            on: (element, event, selector, handler) => {
+            listeners: {},
+            on: function (element, event, selector, handler) {
                 if (selector) {
                     element.addEventListener(event, handler = delegate.bind(element, selector, handler), false);
                 } else {
                     element.addEventListener(event, handler, true);
                 }
-                listeners[i] = {
+                this.listeners[i] = {
                     element: element,
                     event: event,
                     handler: handler,
@@ -82,11 +82,11 @@ const $d = ((w, d) => {
                 };
                 return i++;
             },
-            off: id => {
-                if (id in listeners) {
-                    let h = listeners[id];
+            off: function (id) {
+                if (id in this.listeners) {
+                    let h = this.listeners[id];
                     h.element.removeEventListener(h.event, h.handler, h.capture);
-                    delete listeners[id];
+                    delete this.listeners[id];
                 }
             }
         };
@@ -186,16 +186,30 @@ const $d = ((w, d) => {
             });
         }
 
-        // Sets the collection of style values on the element
-        setStyle(element, values) {
-            Object.keys(values).forEach(k => {
-                if (k in element.style) {
-                    element.style[k] = values[k];
-                }
-                else {
-                    element.style.setProperty(k, values[k]);
-                }
-            });
+        // Sets the collection of style values on the element or elements
+        setStyle(elements, values) {
+            return arrayFunction(elements, function () {
+                Object.keys(values).forEach(k => {
+                    if (k in this.style) {
+                        this.style[k] = values[k];
+                    }
+                    else {
+                        this.style.setProperty(k, values[k]);
+                    }
+                });
+            });            
+        }
+
+        // Empties the contents of the given element. Any event handlers bound to the element contents are automatically removed
+        empty(element) {
+            while (element.firstChild) {
+                let child = element.firstChild;
+                Object.keys(Handler.listeners).forEach(l => {
+                    // Check if eventhandlers are themselves a weak map we might be able to just delete here
+                    if (Handler.listeners[l] === child) { $d.off(l); }
+                });
+                child.remove();
+            }
         }
 
         // Adds an event listener to the given element returning the id of the listener

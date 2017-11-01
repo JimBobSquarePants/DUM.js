@@ -2,7 +2,7 @@
 
 **A teeny tiny helper library for working with the DOM**
 
-**DUM.js** helps you work with the DOM a little easier by providing a concise API for common tasks that would normally be much more verbose. 
+**DUM.js** helps you work with the DOM a lot easier by providing a concise API for common tasks that would normally be much more verbose. 
 
 **DUM.js** isn't designed for AJAX or animations or anything else already covered by dedicated libraries.
 
@@ -95,12 +95,21 @@ $d.getAttr($d.queryAll("input[type=text]"), "name");
 ```
 
 <dl>
-<dt><code>setAttr(element, values)</code></dt>
-<dd>Sets the collection of attribute values on the element.</dd>
+<dt><code>setAttr(elements, values)</code></dt>
+<dd>Sets the collection of attribute values on the element or collection of elements.</dd>
 </dl>
 
 ``` js
 $d.setAttr($d.queryAll("input[type=text]"), {"name":"firstname", "placeholder":"first name"});
+```
+
+<dl>
+<dt><code>setStyle(elements, values)</code></dt>
+<dd>Sets the collection of style values on the element or collection of elements.</dd>
+</dl>
+
+``` js
+$d.setAttr($d.queryAll("input[type=text]"), {"height":"16px", "display":"block"});
 ```
 
 <dl>
@@ -137,6 +146,15 @@ $d.children($d.query("tr"), "td");
 
 ``` js
 $d.create($d.query("p"));
+```
+
+<dl>
+<dt><code>empty(element)</code></dt>
+<dd>Empties the contents of the given element. Any event handlers bound to the element contents are automatically removed.</dd>
+</dl>
+
+``` js
+$d.setAttr($d.queryAll("input[type=text]"), {"height":"16px", "display":"block"});
 ```
 
 <dl>

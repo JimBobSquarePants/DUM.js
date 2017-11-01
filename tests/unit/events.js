@@ -1,8 +1,6 @@
 QUnit.module("events", {
-    setup: function () {
-        document.body.focus();
-    },
-    teardown: globals.tearDown
+    beforeEach: globals.beforeEach,
+    afterEach: globals.afterEach
 });
 
 QUnit.test("null or undefined handler", function (assert) {
