@@ -32,11 +32,11 @@ const $d = ((w, d) => {
 
     const toArray = obj => Array.prototype.slice.call(obj);
 
-    const arrayFunction = (items, handler, args) => {
+    const arrayFunction = (items, delegate, args) => {
         items = isArray(items) ? items : [items];
         let result = [];
         items.forEach(i => {
-            let r = handler.apply(i, args);
+            const r = delegate.apply(i, args);
             result = result.concat(isArray(r) ? r : [r]);
         });
         return result;
@@ -47,6 +47,18 @@ const $d = ((w, d) => {
             arrayFunction(elements, function () { this.classList[method](n); });
         });
     };
+
+    const insertAction = (elements, children, reverse, action) => {
+        children = isArray(children) ? children : [children];
+        children = reverse ? children.reverse() : children;
+        let i = 0
+        arrayFunction(elements, function () {
+            // If we are adding to multiple elements we need to clone
+            let clones = i > 0 ? children.map(c => c.cloneNode(true)) : children
+            clones.forEach(c => action.call(this, c));
+            i++
+        });
+    }
 
     const sibling = (element, dir, expression) => {
         // eslint-disable-next-line no-empty
@@ -159,6 +171,28 @@ const $d = ((w, d) => {
             return d.createElement(type);
         }
 
+        // Prepends the child or collection of child elements to the element or collection of elements
+        // The child collection is reversed before prepending to ensure order is correct.
+        // If prepending to multiple elements the nodes are deep cloned for successive elements
+        prepend(elements, children) {
+            insertAction(elements, children, true, function (c) {
+                this.insertBefore(c, this.firstChild);
+            });
+        }
+
+        // Appends the child or collection of child elements to the element or collection of elements
+        // If appending to multiple elements the nodes are deep cloned for successive elements
+        append(elements, children) {
+            insertAction(elements, children, false, function (c) {
+                this.appendChild(c);
+            });
+        }
+
+        // Returns a value indicating whether the element classList contains the given name
+        hasClass(element, name) {
+            return element.classList.contains(name);
+        }
+
         // Adds an array or space-separated collection of classes to an element or collection of elements
         addClass(elements, names) {
             classAction(elements, "add", names);
@@ -204,7 +238,7 @@ const $d = ((w, d) => {
         empty(elements) {
             return arrayFunction(elements, function () {
                 let child = this;
-                while (child = this.firstChild) {
+                while ((child = this.firstChild)) {
                     Object.keys(Handler.listeners).forEach(l => {
                         // Check if eventhandlers are themselves a weak map; we might be able to just delete here
                         if (Handler.listeners[l] === child) { $d.off(l); }

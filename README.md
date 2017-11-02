@@ -55,6 +55,15 @@ let inputs  = $d.queryAll("input[type=text]");
 ```
 
 <dl>
+<dt><code>hasClass(elements, names)</code></dt>
+<dd>Returns a value indicating whether the given element classlist contains the given class name.</dd>
+</dl>
+
+``` js
+const hasClass = $d.hasClass($d.query("input[type=text]"), "fancy");
+```
+
+<dl>
 <dt><code>addClass(elements, names)</code></dt>
 <dd>Adds an array or space-separated collection of CSS classes to the element or collection of elements.</dd>
 </dl>
@@ -148,6 +157,31 @@ $d.children($d.query("tr"), "td");
 
 ``` js
 $d.create($d.query("p"));
+```
+
+<dl>
+<dt><code>prepend(elements, children)</code></dt>
+<dd>
+Prepends the child or collection of child elements to the element or collection of elements.<br/>
+If prepending to multiple elements the nodes are deep cloned for successive elements<br/>
+The child collection is reversed before prepending to ensure order is correct.
+</dd>
+</dl>
+
+``` js
+$d.append($d.query("p"), $d.create("span"));
+```
+
+<dl>
+<dt><code>append(elements, children)</code></dt>
+<dd>
+Appends the child or collection of child elements to the element or collection of elements.<br/>
+If appending to multiple elements the nodes are deep cloned for successive elements
+</dd>
+</dl>
+
+``` js
+$d.append($d.query("p"), $d.create("span"));
 ```
 
 <dl>
