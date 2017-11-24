@@ -3,6 +3,7 @@
   "description": "A teeny tiny helper library for working with the DOM",
   "version": "1.0.0",
   "author": "James Jackson-South",
+  "main": "src/dum.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/JimBobSquarePants/DUM.js.git"
@@ -10,7 +11,15 @@
   "bugs": {
     "url": "https://github.com/JimBobSquarePants/DUM.js/issues"
   },
+  "scripts": {
+    "build": "node_modules/.bin/webpack",
+    "prepublish": "npm run build"
+  },
   "license": "MIT",
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.8.1"
   }
 }
