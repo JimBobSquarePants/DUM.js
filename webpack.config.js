@@ -7,6 +7,8 @@ module.exports = {
   },
   output: {
     filename: './es5/[name].js',
+    libraryTarget: 'umd',
+    library: '$d',
   },
   module: {
     rules: [
