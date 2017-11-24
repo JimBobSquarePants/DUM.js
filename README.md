@@ -14,10 +14,47 @@ I'm specifically looking for help bundling the library for different importers.
 
 **DUM.js** adds an object to the global scope with the following identifiers: `$d` or `DUM` That object contains the following signatures.
 
-<dl>
-<dt><code>ready(context)</code></dt>
-<dd>Fires when the documents <code>DOMContentLoaded</code> is triggered. Returns a Promise.</dd>
-</dl>
+<a name="DUM"></a>
+
+## DUM - $d
+**Kind**: global class
+
+* [DUM](#DUM)
+    * [.ready(context)](#DUM+ready) ⇒ <code>Promise</code>
+    * [.id(id)](#DUM+id) ⇒ <code>HTMLElement</code> \| <code>null</code>
+    * [.query(expression, context)](#DUM+query) ⇒ <code>HTMLElement</code> \| <code>null</code>
+    * [.queryAll(expression, contexts)](#DUM+queryAll) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+    * [.prev(element, expression)](#DUM+prev) ⇒ <code>HTMLElement</code> \| <code>null</code>
+    * [.next(element, expression)](#DUM+next) ⇒ <code>HTMLElement</code> \| <code>null</code>
+    * [.children(elements, expression)](#DUM+children) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+    * [.create(type)](#DUM+create) ⇒ <code>HTMLElement</code>
+    * [.prepend(elements, children)](#DUM+prepend)
+    * [.append(elements, children)](#DUM+append)
+    * [.detach(element)](#DUM+detach) ⇒ <code>HTMLElement</code>
+    * [.hasClass(element, name)](#DUM+hasClass) ⇒ <code>boolean</code>
+    * [.addClass(elements, names)](#DUM+addClass)
+    * [.removeClass(elements, names)](#DUM+removeClass)
+    * [.toggleClass(elements, names)](#DUM+toggleClass)
+    * [.getAttr(element, name)](#DUM+getAttr) ⇒ <code>HTMLElement</code> \| <code>null</code>
+    * [.setAttr(elements, values)](#DUM+setAttr)
+    * [.removeAttr(elements, names)](#DUM+removeAttr)
+    * [.setStyle(elements, values)](#DUM+setStyle)
+    * [.empty(elements)](#DUM+empty)
+    * [.on(element, events, selector, handler)](#DUM+on) ⇒ <code>number</code>
+    * [.one(element, events, selector, handler)](#DUM+one)
+    * [.off(element, ids)](#DUM+off)
+    * [.trigger(elements, event, detail)](#DUM+trigger) ⇒ <code>boolean</code>
+
+<a name="DUM+ready"></a>
+
+### DUM.ready(context) ⇒ <code>Promise</code>
+Specifies a function to execute when the element of DOM is fully loaded.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| context | <code>HTMLElement</code> \| <code>HTMLDocument</code> | The context to monitor the state of; defaults to `document` if not set |
 
 ``` js
 $d.ready().then(() => {
@@ -25,48 +62,197 @@ $d.ready().then(() => {
 });
 ```
 
-<dl>
-<dt><code>id(id)</code></dt>
-<dd>A shortcut for <code>document.getElementById()</code></dd>
-</dl>
+<a name="DUM+id"></a>
+
+### DUM.id(id) ⇒ <code>HTMLElement</code> \| <code>null</code>
+Returns a reference to the first object with the specified value of the `id` or `name` attribute.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type |
+| --- | --- |
+| id | <code>string</code> |
 
 ``` js
 let mainForm  = $d.id("mainForm");
 ```
 
-<dl>
-<dt><code>query(expression, context)</code></dt>
-<dd>A shortcut for <code>element.querySelector()</code>. 
-Context defaults to the document when no context is passed.</dd>
-</dl>
+<a name="DUM+query"></a>
+
+### DUM.query(expression, context) ⇒ <code>HTMLElement</code> \| <code>null</code>
+Returns the first element that is a descendant of the element on which it is invoked that matches the 
+specified group of selectors.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| expression | <code>string</code> | The selector expression; this must be valid CSS syntax |
+| context | <code>HTMLElement</code> \| <code>HTMLDocument</code> | The context to search within; defaults to `document` if not set |
 
 ``` js
 let mainForm  = $d.query(".form");
 ```
 
-<dl>
-<dt><code>queryAll(expression, contexts)</code></dt>
-<dd>A shortcut for <code>element.querySelectorAll()</code> with enhancements. 
-Contexts defaults to the document when no context or context array is passed. Results are a true array and can be enumerated via <code>forEach</code>.</dd>
-</dl>
+<a name="DUM+queryAll"></a>
+
+### DUM.queryAll(expression, contexts) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+Returns a list of the elements within the element or collection of elements (using depth-first pre-order traversal of the elements nodes) 
+that match the specified group of selectors. The object returned is different from `querySelectorAll` in that it is a true array.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| expression | <code>string</code> | The selector expression; this must be valid CSS syntax |
+| contexts | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> \| <code>HTMLDocument</code> | The element or collection of elements to search within; defaults to `document` if not set |
 
 ``` js
 let inputs  = $d.queryAll("input[type=text]");
 ```
 
-<dl>
-<dt><code>hasClass(elements, names)</code></dt>
-<dd>Returns a value indicating whether the given element classlist contains the given class name.</dd>
-</dl>
+<a name="DUM+prev"></a>
+
+### DUM.prev(element, expression) ⇒ <code>HTMLElement</code> \| <code>null</code>
+Returns the element matching the optional expression immediately prior to the specified one in its parent's children list, or `null` if the specified element is the first one in the list.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | The element to search from |
+| expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
+
+``` js
+$d.prev($d.query("td"), "[scope=row]");
+```
+
+<a name="DUM+next"></a>
+
+### DUM.next(element, expression) ⇒ <code>HTMLElement</code> \| <code>null</code>
+Returns the element matching the optional expression immediately following to the specified one in its parent's children, or null if the specified element is the last one in the list
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | The element to search from |
+| expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
+
+``` js
+$d.next($d.query("td"), "[scope=row]");
+```
+
+<a name="DUM+children"></a>
+
+### DUM.children(elements, expression) ⇒ <code>Array.&lt;HTMLElement&gt;</code>
+Returns an ordered collection of DOM elements that are children of the given element or element collection. 
+If there are no element children, then children contains no elements and has a length of 0.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements to search within |
+| expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
+
+``` js
+$d.children($d.query("tr"), "td");
+```
+
+<a name="DUM+create"></a>
+
+### DUM.create(type) ⇒ <code>HTMLElement</code>
+Creates an instance of an element for the specified tag
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type |
+| --- | --- |
+| type | <code>string</code> |
+
+``` js
+$d.create($d.query("p"));
+```
+
+<a name="DUM+prepend"></a>
+
+### DUM.prepend(elements, children)
+Prepends the child or collection of child elements to the element or collection of elements.
+The child collection is reversed before prepending to ensure order is correct.
+If prepending to multiple elements the nodes are deep cloned for successive elements.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements to prepend within |
+| children | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The child or collection of child elements |
+
+``` js
+$d.prepend($d.query("p"), $d.create("span"));
+```
+
+<a name="DUM+append"></a>
+
+### DUM.append(elements, children)
+Appends the child or collection of child elements to the element or collection of elements
+If appending to multiple elements the nodes are deep cloned for successive elements.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements to prepend within |
+| children | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The child or collection of child elements |
+
+``` js
+$d.append($d.query("p"), $d.create("span"));
+```
+
+<a name="DUM+detach"></a>
+
+### DUM.detach(element) ⇒ <code>HTMLElement</code>
+Detaches an element from the DOM returning the result. Any event handlers bound to the element are still present.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | The element to detach |
+
+``` js
+$d.detach($d.id("detach"));
+```
+
+<a name="DUM+hasClass"></a>
+
+### DUM.hasClass(element, name) ⇒ <code>boolean</code>
+Returns a value indicating whether the specified class value exists in class attribute of the element.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | The element to search within |
+| name | <code>string</code> | The class name |
 
 ``` js
 const hasClass = $d.hasClass($d.query("input[type=text]"), "fancy");
 ```
 
-<dl>
-<dt><code>addClass(elements, names)</code></dt>
-<dd>Adds an array or space-separated collection of CSS classes to the element or collection of elements.</dd>
-</dl>
+<a name="DUM+addClass"></a>
+
+### DUM.addClass(elements, names)
+Add the specified class, space-separated class values or class array to the given element or collection of elements. 
+If these classes already exist in attribute of the element, then they are ignored.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| names | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  |
 
 ``` js
 $d.addClass($d.queryAll("input[type=text]"), "fancy");
@@ -74,10 +260,18 @@ $d.addClass($d.queryAll("input[type=text]"), "fancy fancier");
 $d.addClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
 ```
 
-<dl>
-<dt><code>removeClass(elements, names)</code></dt>
-<dd>Removes an array or space-separated collection of CSS classes from the element or collection of elements.</dd>
-</dl>
+<a name="DUM+removeClass"></a>
+
+### DUM.removeClass(elements, names)
+Removes the specified class, space-separated class values or class array from the given element or collection of element.
+If these classes already exist in attribute of the element, then they are ignored.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| names | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  |
 
 ``` js
 $d.removeClass($d.queryAll("input[type=text]"), "fancy");
@@ -85,10 +279,18 @@ $d.removeClass($d.queryAll("input[type=text]"), "fancy fancier");
 $d.removeClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
 ```
 
-<dl>
-<dt><code>toggleClass(elements, names)</code></dt>
-<dd>Toggles an array or space-separated collection of CSS classes, adding the classes to or removing from the element or collection of elements.</dd>
-</dl>
+<a name="DUM+toggleClass"></a>
+
+### DUM.toggleClass(elements, names)
+Toggles the specified class, space-separated class values or class array to or from the given element or collection of elements. 
+If these classes already exist in attribute of the element, then they are ignored.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| names | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  |
 
 ``` js
 $d.toggleClass($d.queryAll("input[type=text]"), "fancy");
@@ -96,142 +298,177 @@ $d.toggleClass($d.queryAll("input[type=text]"), "fancy fancier");
 $d.toggleClass($d.queryAll("input[type=text]"), ["fancy","fancier","fanciest"]);
 ```
 
-<dl>
-<dt><code>getAttr(element, name)</code></dt>
-<dd>Returns the value for the given attribute name from an element.</dd>
-</dl>
+<a name="DUM+getAttr"></a>
+
+### DUM.getAttr(element, name) ⇒ <code>HTMLElement</code> \| <code>null</code>
+Returns the value of a specified attribute on the element. If the given attribute does not exists the value 
+returned will be `null`.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> | The element |
+| name | <code>string</code> | The string specifying the attribute whose value to return |
 
 ``` js
 $d.getAttr($d.queryAll("input[type=text]"), "name");
 ```
 
-<dl>
-<dt><code>setAttr(elements, values)</code></dt>
-<dd>Sets the collection of attribute values on the element or collection of elements.</dd>
-</dl>
+<a name="DUM+setAttr"></a>
+
+### DUM.setAttr(elements, values)
+Sets the collection of attribute values on the element or collection of elements
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| values | <code>object</code> | The object contining the collection of key-value attribute pairs to set |
 
 ``` js
 $d.setAttr($d.queryAll("input[type=text]"), {"name":"firstname", "placeholder":"first name"});
 ```
 
-<dl>
-<dt><code>setStyle(elements, values)</code></dt>
-<dd>Sets the collection of style values on the element or collection of elements.</dd>
-</dl>
+<a name="DUM+removeAttr"></a>
+
+### DUM.removeAttr(elements, names)
+Removes specified attribute, space-separated attribute names or attribute array from the element or collection of elements
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| names | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The name or array of names to remove |
 
 ``` js
-$d.setAttr($d.queryAll("input[type=text]"), {"height":"16px", "display":"block"});
+$d.removeAttr($d.queryAll("input[type=text]"), "placeholder");
+$d.removeAttr($d.queryAll("input[type=text]"), ["name", "placeholder"]);
 ```
 
-<dl>
-<dt><code>prev(element, expression)</code></dt>
-<dd>Gets the first previous element sibling matching the given optional expression.</dd>
-</dl>
+<a name="DUM+setStyle"></a>
+
+### DUM.setStyle(elements, values)
+Sets the collection of style values on the element or collection of elements.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| values | <code>object</code> | The object contining the collection of key-value attribute pairs to set |
 
 ``` js
-$d.prev($d.query("td"), "[scope=row]");
+$d.setStyle($d.queryAll("input[type=text]"), {"height":"16px", "display":"block"});
 ```
 
-<dl>
-<dt><code>next(element, expression)</code></dt>
-<dd>Gets the first next element sibling matching the given optional expression.</dd>
-</dl>
+<a name="DUM+empty"></a>
+
+### DUM.empty(elements)
+Empties the contents of the given element or collection of elements. 
+Any event handlers bound to the element contents are automatically removed.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
 
 ``` js
-$d.next($d.query("td"), "[scope=row]");
+$d.empty($d.query("#to-empty"));
+$d.empty($d.queryAll(".to-empty"));
 ```
 
-<dl>
-<dt><code>children(elements, expression)</code></dt>
-<dd>Gets the immediate children of the elements or elements matching the given optional expression.</dd>
-</dl>
+<a name="DUM+on"></a>
+
+### DUM.on(element, events, selector, handler) ⇒ <code>number</code>
+Adds an event listener to the given element returning the id of the listener which can be used to unbind
+the event handler at a later point in time. Events can be delegated to a parent by passing a CSS selector.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+**Returns**: <code>number</code> - The id of the listener
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> |  |
+| events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event or collection of event names |
+| selector | <code>string</code> \| <code>undefined</code> | The selector expression; this must be valid CSS syntax or `undefined` |
+| handler | <code>function</code> | The function to call when the event is triggered |
 
 ``` js
-$d.children($d.query("tr"), "td");
-```
+let handlerId = $d.on($d.query("ul"), "click", e => {
+    $d.addClass(e.target, "foo");
+});
 
-<dl>
-<dt><code>create(type)</code></dt>
-<dd>A shortcut for <code>document.createElement()</code>.</dd>
-</dl>
-
-``` js
-$d.create($d.query("p"));
-```
-
-<dl>
-<dt><code>prepend(elements, children)</code></dt>
-<dd>
-Prepends the child or collection of child elements to the element or collection of elements.<br/>
-If prepending to multiple elements the nodes are deep cloned for successive elements<br/>
-The child collection is reversed before prepending to ensure order is correct.
-</dd>
-</dl>
-
-``` js
-$d.append($d.query("p"), $d.create("span"));
-```
-
-<dl>
-<dt><code>append(elements, children)</code></dt>
-<dd>
-Appends the child or collection of child elements to the element or collection of elements.<br/>
-If appending to multiple elements the nodes are deep cloned for successive elements
-</dd>
-</dl>
-
-``` js
-$d.append($d.query("p"), $d.create("span"));
-```
-
-<dl>
-<dt><code>empty(elements)</code></dt>
-<dd>Empties the contents of the given element or elements. Any event handlers bound to each element contents are automatically removed.</dd>
-</dl>
-
-``` js
-$d.empty($d.query("input[type=text]"));
-$d.empty($d.queryAll("input[type=text]"));
-```
-
-<dl>
-<dt><code>on(element, events, selector, handler, capture)</code></dt>
-<dd>Binds a space-separated collection of events to the element. Can be delegated to a parent if a selector is passed. Returns a collection (or single) of id's representing the handler.</dd>
-</dl>
-
-``` js
 let handlerId = $d.on($d.query("ul"), "click", ".highlight", e => {
-    $d.addClass(e.target, "highlight highlight-alt");
+    $d.addClass(e.target, "bar");
 });
 ```
 
-<dl>
-<dt><code>one(element, events, selector, handler, capture)</code></dt>
-<dd>Binds a space-separated collection of events to the element, removing it once the event is fired. Can be delegated to a parent if a selector is passed.</dd>
-</dl>
+<a name="DUM+one"></a>
+
+### DUM.one(element, events, selector, handler)
+Adds an event listener to the given element that is immediately unbound when the event is triggered. 
+Events can be delegated to a parent by passing a CSS selector.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>HTMLElement</code> |  |
+| events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event or collection of event names |
+| selector | <code>string</code> \| <code>undefined</code> | The selector expression; this must be valid CSS syntax or `undefined` |
+| handler | <code>function</code> | The function to call when the event is triggered |
 
 ``` js
+$d.one($d.query("ul"), "click", e => {
+    $d.addClass(e.target, "foo");
+});
+
 $d.one($d.query("ul"), "click", ".highlight", e => {
-    $d.addClass(e.target, "highlight highlight-alt");
+    $d.addClass(e.target, "bar");
 });
 ```
 
-<dl>
-<dt><code>off(ids)</code></dt>
-<dd>Removes the event listener or listeners matching the given id or ids.</dd>
-</dl>
+<a name="DUM+off"></a>
+
+### DUM.off(element, ids)
+Removes any event listener matching the given ids or names.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>Array.&lt;number&gt;</code> | The element to remove the events from. |
+| ids | <code>Array.&lt;number&gt;</code> \| <code>Array.&lt;string&gt;</code> | The event ids or names, previously bound using `on`. |
 
 ``` js
-$d.off(handleIds);
+$d.off(element, "click");
+$d.off(element, ["click", "keydown"]);
+$d.off([1, 2, 3]);
 ```
 
-<dl>
-<dt><code>trigger(elements, event, detail)</code></dt>
-<dd>Triggers an event. By default the event bubbles and is cancelable.</dd>
-</dl>
+<a name="DUM+trigger"></a>
+
+### DUM.trigger(elements, event, detail) ⇒ <code>boolean</code>
+Triggers an event returning a value indicating whether the event has been cancelled. 
+By default the event bubbles and is cancelable.
+
+**Kind**: instance method of [<code>DUM</code>](#DUM)
+**Returns**: <code>boolean</code> - A value indicating whether at least one of the bound event handlers called `Event.preventDefault()`
+
+| Param | Type | Description |
+| --- | --- | --- |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
+| event | <code>string</code> | The name of the event to trigger |
+| detail | <code>object</code> | Optional and defaulting to `null` this contains any event dependant value associated with the event |
 
 ``` js
-$d.trigger($d.queryAll("li"), "customevent");
+if($d.trigger($d.queryAll("li"), "customevent")){
+    return;
+}
 ```
 
 ## Browser Support
