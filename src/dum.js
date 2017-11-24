@@ -11,6 +11,8 @@ const $d = ((w, d) => {
     // Array-like collections that we should slice
     const rslice = /nodelist|htmlcollection/;
 
+    const keys = Object.keys;
+
     // Returns the type of an object in lowercase. Kudos Angus Croll
     // https://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
     const type = obj => ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
@@ -21,7 +23,7 @@ const $d = ((w, d) => {
 
     // Convert, number, string, and collection types to an array 
     const toArray = obj => {
-        return isArray(obj) ? obj : rslice.test(type(obj)) ? [].slice.call(obj) : [obj];
+        return (obj && (isArray(obj) ? obj : rslice.test(type(obj)) ? [].slice.call(obj) : [obj])) || [];
     }
 
     const arrayFunction = (items, delegate, args) => {
@@ -34,8 +36,8 @@ const $d = ((w, d) => {
     };
 
     const classAction = (elements, method, names) => {
-        (isArray(names) ? names : names.split(rspace)).forEach(n => {
-            arrayFunction(elements, function () { this.classList[method](n); });
+        (isArray(names) ? names : (names && names.split(rspace)) || []).forEach(n => {
+            arrayFunction(elements, function () { n && this.classList[method](n); });
         });
     };
 
@@ -72,25 +74,38 @@ const $d = ((w, d) => {
         return {
             listeners: {},
             on: function (element, event, selector, handler) {
-                if (selector) {
+                const hasSelector = isString(selector);
+                if (hasSelector) {
                     element.addEventListener(event, handler = delegate.bind(element, selector, handler), false);
                 } else {
+                    // Switch values to reduce duplication
+                    handler = selector;
                     element.addEventListener(event, handler, true);
                 }
                 this.listeners[i] = {
                     element: element,
                     event: event,
                     handler: handler,
-                    capture: selector ? false : true
+                    capture: hasSelector ? false : true
                 };
                 return i++;
             },
-            off: function (id) {
+            off: function (element, id) {
                 if (id in this.listeners) {
                     let h = this.listeners[id];
                     h.element.removeEventListener(h.event, h.handler, h.capture);
                     delete this.listeners[id];
+                    return;
                 }
+
+                // An element plus selector has been passed
+                keys(this.listeners).forEach(l => {
+                    let h = this.listeners[l];
+                    if (h.element === element && h.event === id) {
+                        h.element.removeEventListener(h.event, h.handler, h.capture);
+                        delete this.listeners[l];
+                    }
+                });
             }
         };
     })();
@@ -202,7 +217,7 @@ const $d = ((w, d) => {
          */
         children(elements, expression) {
             return arrayFunction(elements, function () {
-                return toArray(this.children || []).filter(c => expression ? c.matches(expression) : true);
+                return toArray(this && this.children).filter(c => expression ? c.matches(expression) : true);
             });
         }
 
@@ -221,7 +236,7 @@ const $d = ((w, d) => {
          * The child collection is reversed before prepending to ensure order is correct.
          * If prepending to multiple elements the nodes are deep cloned for successive elements.
          * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements to prepend within
-         * @param {HTMLElement[]} children The collection of child elements
+         * @param {HTMLElement | HTMLElement[]} children The child or collection of child elements
          * @memberof DUM
          */
         prepend(elements, children) {
@@ -234,13 +249,24 @@ const $d = ((w, d) => {
          * Appends the child or collection of child elements to the element or collection of elements
          * If appending to multiple elements the nodes are deep cloned for successive elements.
          * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements to prepend within
-         * @param {HTMLElement[]} children The collection of child elements
+         * @param {HTMLElement | HTMLElement[]} children The child or collection of child elements
          * @memberof DUM
          */
         append(elements, children) {
             insertAction(elements, children, false, function (c) {
                 this.appendChild(c);
             });
+        }
+
+        /**
+         * Detaches an element from the DOM returning the result. Any event handlers bound to the element are still present
+         * @param {HTMLElement} element The element to detach
+         * @returns {HTMLElement}
+         * @memberof DUM
+         */
+        detach(element) {
+            element && element.remove();
+            return element;
         }
 
         /**
@@ -296,7 +322,7 @@ const $d = ((w, d) => {
          * @memberof DUM
          */
         getAttr(element, name) {
-            return element.getAttribute(name);
+            return element && element.getAttribute(name);
         }
 
         /**
@@ -307,7 +333,19 @@ const $d = ((w, d) => {
          */
         setAttr(elements, values) {
             arrayFunction(elements, function () {
-                Object.keys(values).forEach(k => this.setAttribute(k, values[k]));
+                keys(values).forEach(k => this.setAttribute(k, values[k]));
+            });
+        }
+
+        /**
+         * Removes specified attribute, space-separated attribute names or attribute array from the element or collection of elements
+         * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements
+         * @param {string | string[]} names The name or array of names to remove
+         * @memberof DUM
+         */
+        removeAttr(elements, names) {
+            (isArray(names) ? names : names.split(rspace)).forEach(n => {
+                arrayFunction(elements, function () { this.removeAttribute(n); });
             });
         }
 
@@ -319,7 +357,7 @@ const $d = ((w, d) => {
          */
         setStyle(elements, values) {
             arrayFunction(elements, function () {
-                Object.keys(values).forEach(k => {
+                keys(values).forEach(k => {
                     if (k in this.style) {
                         this.style[k] = values[k];
                     }
@@ -340,9 +378,8 @@ const $d = ((w, d) => {
             arrayFunction(elements, function () {
                 let child = this;
                 while ((child = this.firstChild)) {
-                    Object.keys(Handler.listeners).forEach(l => {
-                        // Check if eventhandlers are themselves a weak map; we might be able to just delete here
-                        if (Handler.listeners[l] === child) { $d.off(l); }
+                    keys(Handler.listeners).forEach(l => {
+                        if (Handler.listeners[l].element === child) { $d.off(l); }
                     });
                     child.remove();
                 }
@@ -383,11 +420,17 @@ const $d = ((w, d) => {
         }
 
         /**
-         * Removes any event listener matching the given ids
-         * @param {number[]} ids The event ids, previously bound using `on`.
+         * Removes any event listener matching the given ids or names.
+         * @param {number[]} element The element to remove the events from.
+         * @param {number[] | string[]} ids The event ids or names, previously bound using `on`.
          * @memberof DUM
          */
-        off(ids) {
+        off(element, ids) {
+            if (arguments.length === 2) {
+                arrayFunction(ids, function () { Handler.off(element, this); });
+                return;
+            }
+
             arrayFunction(ids, function () { Handler.off(this); });
         }
 
@@ -409,3 +452,5 @@ const $d = ((w, d) => {
     return w.$d = w.DUM = new DUM();
 
 })(window, document);
+
+// export default $d

@@ -4,7 +4,7 @@ QUnit.module("events", {
 });
 
 QUnit.test("null or undefined handler", function (assert) {
-    assert.expect(8);
+    assert.expect(10);
 
     // on
     try {
@@ -24,8 +24,19 @@ QUnit.test("null or undefined handler", function (assert) {
 
     try {
         globals.addHandlers(DUM.on(DUM.id("firstp"), "click", undefined, e => { }));
-        assert.ok(true, "Passing an udefined selector to on will not throw an exception");
+        assert.ok(true, "Passing an undefined selector to on will not throw an exception");
     } catch (e) { }
+
+    try {
+        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", e => {
+            assert.ok(true, "Passing only 3 parameters uses the correct parameter");
+        }));
+
+        assert.ok(true, "Passing only 3 parameters will not throw an exception");
+        DUM.trigger(DUM.id("firstp"), "click");
+    } catch (e) {
+
+    }
 
     // one
     try {
@@ -45,6 +56,6 @@ QUnit.test("null or undefined handler", function (assert) {
 
     try {
         DUM.one(DUM.id("firstp"), "click", undefined, e => { });
-        assert.ok(true, "Passing an udefined selector to one will not throw an exception");
+        assert.ok(true, "Passing an undefined selector to one will not throw an exception");
     } catch (e) { }
 });
