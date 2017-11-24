@@ -1,0 +1,16 @@
+{
+  "name": "dumjs",
+  "description": "A teeny tiny helper library for working with the DOM",
+  "version": "1.0.0",
+  "author": "James Jackson-South",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JimBobSquarePants/DUM.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JimBobSquarePants/DUM.js/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+  }
+}
