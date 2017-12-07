@@ -4,39 +4,37 @@ QUnit.module("events", {
 });
 
 QUnit.test("null or undefined handler", function (assert) {
-    assert.expect(10);
+    assert.expect(11);
 
     // on
     try {
-        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", null, null));
+        DUM.on(DUM.id("firstp"), "click", null, null);
         assert.ok(true, "Passing a null handler to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", undefined, undefined));
+        DUM.on(DUM.id("firstp"), "click", undefined, undefined);
         assert.ok(true, "Passing an undefined handler to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", null, e => { }));
+        DUM.on(DUM.id("firstp"), "click", null, e => { });
         assert.ok(true, "Passing a null selector to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", undefined, e => { }));
+        DUM.on(DUM.id("firstp"), "click", undefined, e => { });
         assert.ok(true, "Passing an undefined selector to on will not throw an exception");
     } catch (e) { }
 
     try {
-        globals.addHandlers(DUM.on(DUM.id("firstp"), "click", e => {
+        DUM.on(DUM.id("firstp"), "click", e => {
             assert.ok(true, "Passing only 3 parameters uses the correct parameter");
-        }));
+        });
 
         assert.ok(true, "Passing only 3 parameters will not throw an exception");
         DUM.trigger(DUM.id("firstp"), "click");
-    } catch (e) {
-
-    }
+    } catch (e) { }
 
     // one
     try {
@@ -58,4 +56,11 @@ QUnit.test("null or undefined handler", function (assert) {
         DUM.one(DUM.id("firstp"), "click", undefined, e => { });
         assert.ok(true, "Passing an undefined selector to one will not throw an exception");
     } catch (e) { }
+
+    DUM.one(DUM.id("firstp"), "foo", e => {
+        assert.ok(true, "Event is only triggered once");
+    });
+
+    DUM.trigger(DUM.id("firstp"), "foo");
+    DUM.trigger(DUM.id("firstp"), "foo");
 });

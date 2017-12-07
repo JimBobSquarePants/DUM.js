@@ -384,11 +384,9 @@ $d.empty($d.queryAll(".to-empty"));
 <a name="DUM+on"></a>
 
 ### DUM.on(element, events, selector, handler) ⇒ <code>number</code>
-Adds an event listener to the given element returning the id of the listener which can be used to unbind
-the event handler at a later point in time. Events can be delegated to a parent by passing a CSS selector.
+Adds an event listener to the given element Events can be delegated to a parent by passing an optional CSS selector.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
-**Returns**: <code>number</code> - The id of the listener
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -434,20 +432,19 @@ $d.one($d.query("ul"), "click", ".highlight", e => {
 
 <a name="DUM+off"></a>
 
-### DUM.off(element, ids)
-Removes any event listener matching the given ids or names.
+### DUM.off(element, events)
+Removes any event listener matching the given event name or names.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | element | <code>Array.&lt;number&gt;</code> | The element to remove the events from. |
-| ids | <code>Array.&lt;number&gt;</code> \| <code>Array.&lt;string&gt;</code> | The event ids or names, previously bound using `on`. |
+| events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event name or names, previously bound using `on`. |
 
 ``` js
 $d.off(element, "click");
 $d.off(element, ["click", "keydown"]);
-$d.off([1, 2, 3]);
 ```
 
 <a name="DUM+trigger"></a>

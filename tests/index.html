@@ -9,10 +9,6 @@
   <script src="../src/dum.js"></script>
   <script>
     window.globals = {
-      handlers: [],
-      addHandlers: function (ids) {
-        this.handlers = this.handlers.concat(ids);
-      },
       beforeEach: function () {
         let main = document.getElementById("main");
         let fragment = document.createDocumentFragment();
@@ -29,9 +25,8 @@
         document.body.focus();
       },
       afterEach: function () {
-        DUM.off(window.globals.handlers);
         let main = document.getElementById("main");
-        main.innerHTML = "";
+        main.innerHTML = ""; // Events are automatically gc collected
       }
     }
   </script>
@@ -52,7 +47,6 @@
   <script src="unit/creation.js"></script>
   <script src="unit/empty.js"></script>
   <script src="unit/insert.js"></script>
-
 </body>
 
 </html>

@@ -62,7 +62,20 @@ const $d = ((w, d) => {
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
     const Handler = (() => {
-        let i = 1;
+        const handlerMap = new WeakMap();
+        let i = 0;
+
+        const getHandlers = function (element, event) {
+            if (!handlerMap.has(element)) {
+                let handlers = {
+                    [event]: {}
+                };
+
+                handlerMap.set(element, handlers);
+            }
+
+            return handlerMap.get(element)[[event]];
+        };
 
         // Bubbled event handling
         const delegate = (selector, handler, event) => {
@@ -71,43 +84,30 @@ const $d = ((w, d) => {
                 handler.call(t, event);
             }
         };
-        return {
-            listeners: {},
-            on: function (element, event, selector, handler) {
-                const hasSelector = isString(selector);
-                if (hasSelector) {
-                    element.addEventListener(event, handler = delegate.bind(element, selector, handler), false);
-                } else {
-                    // Switch values to reduce duplication
-                    handler = selector;
-                    element.addEventListener(event, handler, true);
-                }
-                this.listeners[i] = {
-                    element: element,
-                    event: event,
-                    handler: handler,
-                    capture: hasSelector ? false : true
-                };
-                return i++;
-            },
-            off: function (element, id) {
-                if (id in this.listeners) {
-                    let h = this.listeners[id];
-                    h.element.removeEventListener(h.event, h.handler, h.capture);
-                    delete this.listeners[id];
-                    return;
-                }
 
-                // An element plus selector has been passed
-                keys(this.listeners).forEach(l => {
-                    let h = this.listeners[l];
-                    if (h.element === element && h.event === id) {
-                        h.element.removeEventListener(h.event, h.handler, h.capture);
-                        delete this.listeners[l];
-                    }
+        return {
+            on: function (element, event, selector, handler, capture, once) {
+
+                handler = selector ? delegate.bind(element, selector, handler) : handler;
+                element.addEventListener(event, handler, { capture: capture, once: once });
+
+                if (!once) {
+                    getHandlers(element, event)[i++] = {
+                        handler: handler,
+                        once: once,
+                        capture: capture
+                    };
+                }
+            },
+            off: function (element, event) {
+                let handlers = getHandlers(element, event)
+                keys(handlers).forEach(l => {
+                    let h = handlers[l];
+                    element.removeEventListener(event, h.handler, { once: h.once }, h.capture);
+                    delete handlers[l];
                 });
             }
-        };
+        }
     })();
 
     /**
@@ -132,7 +132,7 @@ const $d = ((w, d) => {
                     resolve();
                 }
                 else {
-                    Handler.on(context, "DOMContentLoaded", null, () => resolve());
+                    Handler.on(context, "DOMContentLoaded", null, () => resolve(), true, true);
                 }
             });
         }
@@ -370,7 +370,7 @@ const $d = ((w, d) => {
 
         /**
          * Empties the contents of the given element or collection of elements. 
-         * Any event handlers bound to the element contents are automatically removed.
+         * Any event handlers bound to the element contents are automatically garbage collected.
          * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements
          * @memberof DUM
          */
@@ -378,26 +378,26 @@ const $d = ((w, d) => {
             arrayFunction(elements, function () {
                 let child = this;
                 while ((child = this.firstChild)) {
-                    keys(Handler.listeners).forEach(l => {
-                        if (Handler.listeners[l].element === child) { $d.off(l); }
-                    });
-                    child.remove();
+                    child.remove(); // Events are automatically gc collected
                 }
             });
         }
 
         /**
-         * Adds an event listener to the given element returning the id of the listener which can be used to unbind
-         * the event handler at a later point in time. Events can be delegated to a parent by passing a CSS selector.
+         * Adds an event listener to the given element. Events can be delegated to a parent by passing a CSS selector.
          * @param {HTMLElement} element 
          * @param {string | string[]} events The event or collection of event names
-         * @param {string | undefined} selector The selector expression; this must be valid CSS syntax or `undefined`
+         * @param {string | undefined} selector The optional selector expression; this must be valid CSS syntax or `undefined`
          * @param {Function} handler The function to call when the event is triggered
-         * @returns {number} The id of the listener
          * @memberof DUM
          */
         on(element, events, selector, handler) {
-            return arrayFunction(events, function () { return Handler.on(element, this, selector, handler); });
+            if (isString(selector)) {
+                arrayFunction(events, function () { Handler.on(element, this, selector, handler, false, false); });
+            } else {
+                handler = selector;
+                arrayFunction(events, function () { Handler.on(element, this, null, handler, true, false); });
+            }
         }
 
         /**
@@ -410,32 +410,22 @@ const $d = ((w, d) => {
         * @memberof DUM
         */
         one(element, events, selector, handler) {
-            let ids = [],
-                one = () => this.off(ids);
-
-            toArray(events).forEach(e => {
-                ids.push(Handler.on(element, e, selector, handler));
-                if (isString(selector)) {
-                    ids.push(Handler.on(element, e, selector, one));
-                } else {
-                    ids.push(Handler.on(element, e, one));
-                }
-            });
+            if (isString(selector)) {
+                arrayFunction(events, function () { Handler.on(element, this, selector, handler, false, true); });
+            } else {
+                handler = selector;
+                arrayFunction(events, function () { Handler.on(element, this, null, handler, true, true); });
+            }
         }
 
         /**
-         * Removes any event listener matching the given ids or names.
+         * Removes any event listener matching the given name or names.
          * @param {number[]} element The element to remove the events from.
-         * @param {number[] | string[]} ids The event ids or names, previously bound using `on`.
+         * @param {string | string[]} events The event name or names, previously bound using `on`.
          * @memberof DUM
          */
-        off(element, ids) {
-            if (arguments.length === 2) {
-                arrayFunction(ids, function () { Handler.off(element, this); });
-                return;
-            }
-
-            arrayFunction(ids, function () { Handler.off(this); });
+        off(element, events) {
+            arrayFunction(events, function () { Handler.off(element, this); });
         }
 
         /**
