@@ -396,11 +396,11 @@ Adds an event listener to the given element Events can be delegated to a parent 
 | handler | <code>function</code> | The function to call when the event is triggered |
 
 ``` js
-let handlerId = $d.on($d.query("ul"), "click", e => {
+$d.on($d.query("ul"), "click", e => {
     $d.addClass(e.target, "foo");
 });
 
-let handlerId = $d.on($d.query("ul"), "click", ".highlight", e => {
+$d.on($d.query("ul"), "click", ".highlight", e => {
     $d.addClass(e.target, "bar");
 });
 ```
