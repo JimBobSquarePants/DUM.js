@@ -124,7 +124,7 @@ Returns the element matching the optional expression immediately prior to the sp
 | expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
 
 ``` js
-$d.prev($d.query("td"), "[scope=row]");
+let previous = $d.prev($d.query("td"), "[scope=row]");
 ```
 
 <a name="DUM+next"></a>
@@ -140,7 +140,7 @@ Returns the element matching the optional expression immediately following to th
 | expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
 
 ``` js
-$d.next($d.query("td"), "[scope=row]");
+let next = $d.next($d.query("td"), "[scope=row]");
 ```
 
 <a name="DUM+children"></a>
@@ -157,7 +157,7 @@ If there are no element children, then children contains no elements and has a l
 | expression | <code>string</code> | The optional selector expression; this must be valid CSS syntax |
 
 ``` js
-$d.children($d.query("tr"), "td");
+let children = $d.children($d.query("tr"), "td");
 ```
 
 <a name="DUM+create"></a>
@@ -172,7 +172,7 @@ Creates an instance of an element for the specified tag
 | type | <code>string</code> |
 
 ``` js
-$d.create($d.query("p"));
+let para = $d.create($d.query("p"));
 ```
 
 <a name="DUM+prepend"></a>
@@ -222,7 +222,7 @@ Detaches an element from the DOM returning the result. Any event handlers bound 
 | element | <code>HTMLElement</code> | The element to detach |
 
 ``` js
-$d.detach($d.id("detach"));
+let detached = $d.detach($d.id("detach"));
 ```
 
 <a name="DUM+hasClass"></a>
@@ -312,7 +312,7 @@ returned will be `null`.
 | name | <code>string</code> | The string specifying the attribute whose value to return |
 
 ``` js
-$d.getAttr($d.queryAll("input[type=text]"), "name");
+const attr = $d.getAttr($d.queryAll("input[type=text]"), "name");
 ```
 
 <a name="DUM+setAttr"></a>
@@ -384,7 +384,7 @@ $d.empty($d.queryAll(".to-empty"));
 <a name="DUM+on"></a>
 
 ### DUM.on(element, events, selector, handler) ⇒ <code>number</code>
-Adds an event listener to the given element Events can be delegated to a parent by passing an optional CSS selector.
+Adds an event listener to the given element. Events can be delegated to a parent by passing an optional CSS selector.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
 
