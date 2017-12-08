@@ -67,43 +67,51 @@ const $d = ((w, d) => {
 
         const getHandlers = function (element, event) {
             if (!handlerMap.has(element)) {
-                let handlers = {
-                    [event]: {}
-                };
-
+                let handlers = { [event]: {} };
+                handlerMap.set(element, handlers);
+            } else if (!handlerMap.get(element)[[event]]) {
+                let handlers = handlerMap.get(element);
+                handlers[[event]] = {};
                 handlerMap.set(element, handlers);
             }
 
             return handlerMap.get(element)[[event]];
         };
 
-        // Bubbled event handling
-        const delegate = (selector, handler, event) => {
-            let t = event.target;
-            if (t.closest && t.closest(selector)) {
-                handler.call(t, event);
+        // Bubbled event handling, one-time running
+        const delegate = (selector, handler, element, once, event) => {
+            if (!handler) {
+                return;
+            }
+            if (selector) {
+                let t = event.target;
+                if (t.closest && t.closest(selector)) {
+                    handler.call(t, event);
+                }
+            } else {
+                handler.call(element, event);
+            }
+
+            if (once) {
+                Handler.off(element, event.type);
             }
         };
 
         return {
             on: function (element, event, selector, handler, capture, once) {
 
-                handler = selector ? delegate.bind(element, selector, handler) : handler;
-                element.addEventListener(event, handler, { capture: capture, once: once });
-
-                if (!once) {
-                    getHandlers(element, event)[i++] = {
-                        handler: handler,
-                        once: once,
-                        capture: capture
-                    };
-                }
+                handler = delegate.bind(element, selector, handler, element, once);
+                element.addEventListener(event, handler, capture);
+                getHandlers(element, event)[i++] = {
+                    handler: handler,
+                    capture: capture
+                };
             },
             off: function (element, event) {
-                let handlers = getHandlers(element, event)
+                let handlers = getHandlers(element, event);
                 keys(handlers).forEach(l => {
                     let h = handlers[l];
-                    element.removeEventListener(event, h.handler, { once: h.once }, h.capture);
+                    element.removeEventListener(event, h.handler, h.capture);
                     delete handlers[l];
                 });
             }
@@ -438,7 +446,7 @@ const $d = ((w, d) => {
          * @memberof DUM
          */
         trigger(elements, event, detail) {
-            let params = { bubbles: true, cancelable: true, detail: detail };
+            const params = { bubbles: true, cancelable: true, detail: detail };
             return arrayFunction(elements, function () { return this.dispatchEvent(new CustomEvent(event, params)); }).length || false;
         }
     }

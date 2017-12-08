@@ -57,10 +57,10 @@ QUnit.test("null or undefined handler", function (assert) {
         assert.ok(true, "Passing an undefined selector to one will not throw an exception");
     } catch (e) { }
 
-    DUM.one(DUM.id("firstp"), "foo", e => {
+    DUM.one(DUM.id("firstp"), "mouseover", e => {
         assert.ok(true, "Event is only triggered once");
     });
 
-    DUM.trigger(DUM.id("firstp"), "foo");
-    DUM.trigger(DUM.id("firstp"), "foo");
+    DUM.trigger(DUM.id("firstp"), "mouseover");
+    DUM.trigger(DUM.id("firstp"), "mouseover");
 });
