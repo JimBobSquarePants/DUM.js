@@ -383,7 +383,7 @@ $d.empty($d.queryAll(".to-empty"));
 
 <a name="DUM+on"></a>
 
-### DUM.on(element, events, selector, handler) ⇒ <code>number</code>
+### DUM.on(element, events, selector, handler)
 Adds an event listener to the given element or collection of elements. Events can be delegated to a parent by passing an optional CSS selector.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
