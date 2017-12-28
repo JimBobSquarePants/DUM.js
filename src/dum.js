@@ -59,6 +59,17 @@ const $d = ((w, d) => {
         return element;
     };
 
+    const doBind = (once, elements, events, selector, handler) => {
+        // Handle missing selector param
+        const sel = isString(selector) ? selector : null;
+        handler = sel ? handler : selector;
+
+        arrayFunction(elements, function () {
+            let el = this;
+            arrayFunction(events, function () { Handler.on(el, this, sel, handler, true, once); });
+        });
+    };
+
     // Handles the adding and removing of events. 
     // Events can be assigned to the element or delegated to a parent 
     const Handler = (() => {
@@ -386,54 +397,47 @@ const $d = ((w, d) => {
             arrayFunction(elements, function () {
                 let child = this;
                 while ((child = this.firstChild)) {
-                    child.remove(); // Events are automatically gc collected
+                    child.remove(); // Events are automatically garbage collected
                 }
             });
         }
 
         /**
-         * Adds an event listener to the given element. Events can be delegated to a parent by passing a CSS selector.
-         * @param {HTMLElement} element 
+         * Adds an event listener to the given element or collection of elements. Events can be delegated to a parent by passing a CSS selector.
+         * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements
          * @param {string | string[]} events The event or collection of event names
          * @param {string | undefined} selector The optional selector expression; this must be valid CSS syntax or `undefined`
          * @param {Function} handler The function to call when the event is triggered
          * @memberof DUM
          */
-        on(element, events, selector, handler) {
-            if (isString(selector)) {
-                arrayFunction(events, function () { Handler.on(element, this, selector, handler, false, false); });
-            } else {
-                handler = selector;
-                arrayFunction(events, function () { Handler.on(element, this, null, handler, true, false); });
-            }
+        on(elements, events, selector, handler) {
+            doBind(false, elements, events, selector, handler);
         }
 
         /**
-        * Adds an event listener to the given element that is immediately unbound when the event is triggered. 
+        * Adds an event listener to the given element or collection of elements that is immediately unbound when the event is triggered. 
         * Events can be delegated to a parent by passing a CSS selector.
-        * @param {HTMLElement} element 
+        * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements
         * @param {string | string[]} events The event or collection of event names
         * @param {string | undefined} selector The selector expression; this must be valid CSS syntax or `undefined`
         * @param {Function} handler The function to call when the event is triggered
         * @memberof DUM
         */
-        one(element, events, selector, handler) {
-            if (isString(selector)) {
-                arrayFunction(events, function () { Handler.on(element, this, selector, handler, false, true); });
-            } else {
-                handler = selector;
-                arrayFunction(events, function () { Handler.on(element, this, null, handler, true, true); });
-            }
+        one(elements, events, selector, handler) {
+            doBind(true, elements, events, selector, handler);
         }
 
         /**
          * Removes any event listener matching the given name or names.
-         * @param {number[]} element The element to remove the events from.
+         * @param {HTMLElement | HTMLElement[]} elements The element or collection of elements
          * @param {string | string[]} events The event name or names, previously bound using `on`.
          * @memberof DUM
          */
-        off(element, events) {
-            arrayFunction(events, function () { Handler.off(element, this); });
+        off(elements, events) {
+            arrayFunction(elements, function () {
+                let el = this;
+                arrayFunction(events, function () { Handler.off(el, this); });
+            });
         }
 
         /**

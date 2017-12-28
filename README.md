@@ -384,13 +384,13 @@ $d.empty($d.queryAll(".to-empty"));
 <a name="DUM+on"></a>
 
 ### DUM.on(element, events, selector, handler) ⇒ <code>number</code>
-Adds an event listener to the given element. Events can be delegated to a parent by passing an optional CSS selector.
+Adds an event listener to the given element or collection of elements. Events can be delegated to a parent by passing an optional CSS selector.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>HTMLElement</code> |  |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
 | events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event or collection of event names |
 | selector | <code>string</code> \| <code>undefined</code> | The selector expression; this must be valid CSS syntax or `undefined` |
 | handler | <code>function</code> | The function to call when the event is triggered |
@@ -408,14 +408,14 @@ $d.on($d.query("ul"), "click", ".highlight", e => {
 <a name="DUM+one"></a>
 
 ### DUM.one(element, events, selector, handler)
-Adds an event listener to the given element that is immediately unbound when the event is triggered. 
+Adds an event listener to the given element or collection of elements that is immediately unbound when the event is triggered. 
 Events can be delegated to a parent by passing a CSS selector.
 
 **Kind**: instance method of [<code>DUM</code>](#DUM)
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>HTMLElement</code> |  |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
 | events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event or collection of event names |
 | selector | <code>string</code> \| <code>undefined</code> | The selector expression; this must be valid CSS syntax or `undefined` |
 | handler | <code>function</code> | The function to call when the event is triggered |
@@ -439,7 +439,7 @@ Removes any event listener matching the given event name or names.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Array.&lt;number&gt;</code> | The element to remove the events from. |
+| elements | <code>HTMLElement</code> \| <code>Array.&lt;HTMLElement&gt;</code> | The element or collection of elements |
 | events | <code>string</code> \| <code>Array.&lt;string&gt;</code> | The event name or names, previously bound using `on`. |
 
 ``` js
