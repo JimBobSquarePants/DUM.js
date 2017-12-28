@@ -40,7 +40,7 @@ I'm specifically looking for help bundling the library for different importers.
     * [.removeAttr(elements, names)](#DUM+removeAttr)
     * [.setStyle(elements, values)](#DUM+setStyle)
     * [.empty(elements)](#DUM+empty)
-    * [.on(element, events, selector, handler)](#DUM+on) ⇒ <code>number</code>
+    * [.on(element, events, selector, handler)](#DUM+on)
     * [.one(element, events, selector, handler)](#DUM+one)
     * [.off(element, ids)](#DUM+off)
     * [.trigger(elements, event, detail)](#DUM+trigger) ⇒ <code>boolean</code>
