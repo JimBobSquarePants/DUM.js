@@ -42,7 +42,7 @@ I'm specifically looking for help bundling the library for different importers.
     * [.empty(elements)](#DUM+empty)
     * [.on(element, events, selector, handler)](#DUM+on)
     * [.one(element, events, selector, handler)](#DUM+one)
-    * [.off(element, ids)](#DUM+off)
+    * [.off(element, events)](#DUM+off)
     * [.trigger(elements, event, detail)](#DUM+trigger) ⇒ <code>boolean</code>
 
 <a name="DUM+ready"></a>
