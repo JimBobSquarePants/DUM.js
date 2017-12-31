@@ -403,6 +403,11 @@ $d.on($d.query("ul"), "click", e => {
 $d.on($d.query("ul"), "click", ".highlight", e => {
     $d.addClass(e.target, "bar");
 });
+
+// Namespaces are supported
+$d.on($d.query("ul"), "click.baz", ".highlight", e => {
+    $d.addClass(e.target, "bar");
+});
 ```
 
 <a name="DUM+one"></a>
@@ -428,6 +433,11 @@ $d.one($d.query("ul"), "click", e => {
 $d.one($d.query("ul"), "click", ".highlight", e => {
     $d.addClass(e.target, "bar");
 });
+
+// Namespaces are supported
+$d.one($d.query("ul"), "click.baz", ".highlight", e => {
+    $d.addClass(e.target, "bar");
+});
 ```
 
 <a name="DUM+off"></a>
@@ -445,6 +455,9 @@ Removes any event listener matching the given event name or names.
 ``` js
 $d.off(element, "click");
 $d.off(element, ["click", "keydown"]);
+
+// Namespaces are supported
+$d.off(element, "click.baz");
 ```
 
 <a name="DUM+trigger"></a>
@@ -463,7 +476,12 @@ By default the event bubbles and is cancelable.
 | detail | <code>object</code> | Optional and defaulting to `null` this contains any event dependant value associated with the event |
 
 ``` js
-if($d.trigger($d.queryAll("li"), "customevent")){
+if(!$d.trigger($d.queryAll("li"), "customevent")){
+    return;
+}
+
+// Namespaces are supported and can be accessed via `event.detail.namespace` in the handling function.
+if!($d.trigger($d.queryAll("li"), "click.foo")){
     return;
 }
 ```

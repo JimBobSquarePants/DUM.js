@@ -11,7 +11,13 @@ const $d = ((w, d) => {
     // Array-like collections that we should slice
     const rslice = /nodelist|htmlcollection/;
 
+    // Event namespace detection
+    const rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
+
     const keys = Object.keys;
+
+    // Escape function for RexExp https://github.com/benjamingr/RegExp.escape
+    const escape = (s) => String(s).replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
     // Returns the type of an object in lowercase. Kudos Angus Croll
     // https://javascriptweblog.wordpress.com/2011/08/08/fixing-the-javascript-typeof-operator/
@@ -76,17 +82,36 @@ const $d = ((w, d) => {
         const handlerMap = new WeakMap();
         let i = 0;
 
-        const getHandlers = function (element, event) {
-            if (!handlerMap.has(element)) {
+        const getHandlers = function (element, event, set) {
+            // Set if the event doesn't exist
+            if (!handlerMap.has(element) && set) {
                 let handlers = { [event]: {} };
                 handlerMap.set(element, handlers);
-            } else if (!handlerMap.get(element)[[event]]) {
+            } else if (!handlerMap.get(element)[[event]] && set) {
                 let handlers = handlerMap.get(element);
                 handlers[[event]] = {};
                 handlerMap.set(element, handlers);
             }
 
-            return handlerMap.get(element)[[event]];
+            if (set) {
+                return handlerMap.get(element)[[event]];
+            }
+
+            // Get handlers matching type or namespace partial
+            if (handlerMap.has(element)) {
+                const namespaces = rtypenamespace.exec(event) || [];
+                let handlers = handlerMap.get(element);
+                for (const h of keys(handlers)) {
+                    let len = namespaces.length;
+                    while (len--) {
+                        if (namespaces[len] && (new RegExp(`^${escape(h)}$`).exec(namespaces[len]))) {
+                            return handlers[h];
+                        }
+                    }
+                }
+            }
+
+            return {};
         };
 
         // Bubbled event handling, one-time running
@@ -110,19 +135,21 @@ const $d = ((w, d) => {
 
         return {
             on: function (element, event, selector, handler, capture, once) {
-
+                // Store the full namespaced event binding only the type
+                const type = event.split(".")[0];
                 handler = delegate.bind(element, selector, handler, element, once);
-                element.addEventListener(event, handler, capture);
-                getHandlers(element, event)[i++] = {
+                element.addEventListener(type, handler, capture);
+                getHandlers(element, event, true)[i++] = {
+                    type: type,
                     handler: handler,
                     capture: capture
                 };
             },
             off: function (element, event) {
-                let handlers = getHandlers(element, event);
+                let handlers = getHandlers(element, event, false);
                 keys(handlers).forEach(l => {
                     let h = handlers[l];
-                    element.removeEventListener(event, h.handler, h.capture);
+                    element.removeEventListener(h.type, h.handler, h.capture);
                     delete handlers[l];
                 });
             }
@@ -450,8 +477,11 @@ const $d = ((w, d) => {
          * @memberof DUM
          */
         trigger(elements, event, detail) {
+            const namespaces = rtypenamespace.exec(event) || [];
+            detail = detail || {};
+            detail.namespace = (namespaces[2] || "");
             const params = { bubbles: true, cancelable: true, detail: detail };
-            return arrayFunction(elements, function () { return this.dispatchEvent(new CustomEvent(event, params)); }).length || false;
+            return arrayFunction(elements, function () { return this.dispatchEvent(new CustomEvent(namespaces[1], params)); }).length || false;
         }
     }
 
