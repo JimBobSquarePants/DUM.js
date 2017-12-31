@@ -489,4 +489,4 @@ const $d = ((w, d) => {
 
 })(window, document);
 
-// export default $d
+export default $d
