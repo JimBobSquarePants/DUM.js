@@ -27,6 +27,8 @@ const $d = ((w, d) => {
 
     const isArray = obj => type(obj) === "array";
 
+    const isFunc = obj => type(obj) === "function";
+
     // Convert, number, string, and collection types to an array 
     const toArray = obj => {
         return (obj && (isArray(obj) ? obj : rslice.test(type(obj)) ? [].slice.call(obj) : [obj])) || [];
@@ -67,12 +69,14 @@ const $d = ((w, d) => {
 
     const doBind = (once, elements, events, selector, handler) => {
         // Handle missing selector param
-        const sel = isString(selector) ? selector : null;
-        handler = sel ? handler : selector;
+        const hasSelector = isString(selector);
+        if (!hasSelector && !isFunc(handler)) {
+            handler = selector;
+        }
 
         arrayFunction(elements, function () {
             let el = this;
-            arrayFunction(events, function () { Handler.on(el, this, sel, handler, true, once); });
+            arrayFunction(events, function () { Handler.on(el, this, hasSelector ? selector : null, handler, hasSelector ? false : true, once); });
         });
     };
 
@@ -120,9 +124,13 @@ const $d = ((w, d) => {
                 return;
             }
             if (selector) {
-                let t = event.target;
-                if (t.closest && t.closest(selector)) {
-                    handler.call(t, event);
+                let target = event.target;
+                while (target && target !== element && target.matches && !target.matches(selector)) {
+                    target = target.parentNode;
+                }
+
+                if (target.matches && target.matches(selector)) {
+                    handler.call(target, event);
                 }
             } else {
                 handler.call(element, event);
