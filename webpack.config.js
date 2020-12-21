@@ -1,33 +1,38 @@
-const webpack = require('webpack');
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   entry: {
-    dum: './src/dum.js',
-    'dum.min': './src/dum.js',
+    dum: "./src/dum.js",
+    "dum.min": "./src/dum.js",
+  },
+  optimization: {
+    minimize: false
   },
   output: {
-    filename: './es5/[name].js',
-    libraryTarget: 'umd',
-    library: '$d',
+    filename: "./es5/[name].js",
+    libraryTarget: "umd",
+    library: "$d",
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: /(node_modules)/,
+        exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['babel-preset-env'],
+            presets: [
+              ['@babel/preset-env', { targets: "defaults" }]
+            ],
+            plugins: ['@babel/plugin-proposal-class-properties']
           },
         },
       },
     ],
   },
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      include: /\.min\.js$/,
-      minimize: true,
+    new TerserPlugin({
+      test: /\.min\.js$/
     }),
   ],
 };

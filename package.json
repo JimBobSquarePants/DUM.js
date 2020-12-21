@@ -12,14 +12,16 @@
     "url": "https://github.com/JimBobSquarePants/DUM.js/issues"
   },
   "scripts": {
-    "build": "node_modules/.bin/webpack",
-    "prepublish": "npm run build"
+    "build": "webpack --config webpack.config.js",
+    "prepublishOnly": "npm run build"
   },
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "webpack": "^3.8.1"
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
+    "terser-webpack-plugin": "^5.0.3",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0"
   }
 }
